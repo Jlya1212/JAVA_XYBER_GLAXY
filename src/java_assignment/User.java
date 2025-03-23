@@ -21,4 +21,36 @@ public class User {
     this.name     = name;
     this.email    = email;
     }
+    
+    public String getUsername(){
+        return username;
+    }
+    
+    public String getPassword(){
+        return password;
+    }
+    
+    public String getName(){
+        return name;
+    }
+    
+    public String getEmail(){
+        return email;
+    }
+    
+    public void setUsername(){
+        this.username = username;
+    }
+    
+    public void setPassword(){
+        this.password = password;
+    }
+    
+    public void setName(){
+        this.name = name;
+    }
+    
+    public void setEmail(){
+        this.email = email;
+    }
 }
