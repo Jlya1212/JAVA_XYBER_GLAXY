@@ -1,15 +1,14 @@
 package java_assignment;
 
 import java.util.Scanner;
-import java.util.List;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║   Welcome to Xyber Glaxy Store   ║");
-        System.out.println("╚══════════════════════════════════╝");
+        System.out.println("+==================================+");
+        System.out.println("+   Welcome to Xyber Glaxy Store   +");
+        System.out.println("+==================================+");
         
         while (true) {
             String role = selectRole();
@@ -40,7 +39,7 @@ public class Main {
     }
 
     private static boolean handleAdminFlow() {
-        System.out.println("\n═════════ Admin Login ═════════");
+        System.out.println("\n======== Admin Login ========");
         User user = UserManager.login(scanner);
         
         if (user instanceof Admin) {
@@ -53,23 +52,20 @@ public class Main {
     }
 
     private static boolean handleCustomerFlow() {
-        System.out.println("\n═════════ Customer Portal ═════════");
-        System.out.println("1. Login");
-        System.out.println("2. Register");
-        System.out.println("3. Back to Main Menu");
-        System.out.print("Enter choice (1-3): ");
+        while (true) {
+            System.out.println("\n======== Customer Portal ========");
+            System.out.println("1. Login");
+            System.out.println("2. Register");
+            System.out.println("3. Back to Main Menu");
+            System.out.print("Enter choice (1-3): ");
 
-        String choice = scanner.nextLine().trim();
-        switch (choice) {
-            case "1":
-                return handleCustomerLogin();
-            case "2":
-                return handleCustomerRegistration();
-            case "3":
-                return true;
-            default:
-                System.out.println("Invalid choice!");
-                return false;
+            String choice = scanner.nextLine().trim();
+            switch (choice) {
+                case "1": return handleCustomerLogin();
+                case "2": return handleCustomerRegistration();
+                case "3": return false;
+                default: System.out.println("Invalid choice!");
+            }
         }
     }
 
@@ -99,7 +95,7 @@ public class Main {
 
     private static void showAdminMenu() {
         while (true) {
-            System.out.println("\n═════════ Admin Dashboard ═════════");
+            System.out.println("\n======== Admin Dashboard ========");
             System.out.println("1. View Low Stock Alerts");
             System.out.println("2. Manage Products");
             System.out.println("3. View Orders");
@@ -114,7 +110,7 @@ public class Main {
 
     private static void showCustomerMenu(Customer customer) {
         while (true) {
-            System.out.println("\n═════════ Shopping Portal ═════════");
+            System.out.println("\n======== Shopping Portal ========");
             System.out.println("1. View Products");
             System.out.println("2. View Cart");
             System.out.println("3. View Wishlist");
@@ -140,16 +136,23 @@ public class Main {
 
     private static void displayProducts(Customer customer) {
         String category = selectProductCategory();
-        List<Product> products = ProductManager.getProductsByCategory(category);
+        Product[] products = ProductManager.getProductsByCategory(category);
         
-        System.out.println("\n═════════ " + category + " Products ═════════");
-        if (products.isEmpty()) {
+        System.out.println("\n======== " + category + " Products ========");
+        if (products.length == 0) {
             System.out.println("No products found in this category!");
             return;
         }
 
-        products.forEach(Product::printDetails);
+        for (Product product : products) {
+            product.printDetails();
+            System.out.println();
+        }
         
+        handleProductSelection(customer);
+    }
+
+    private static void handleProductSelection(Customer customer) {
         while (true) {
             System.out.println("\n[1] Add to Cart");
             System.out.println("[2] Back to Menu");
@@ -159,41 +162,37 @@ public class Main {
             if (choice.equals("2")) break;
 
             if (choice.equals("1")) {
-                handleAddToCart(customer);
-            }
-        }
-    }
+                try {
+                    System.out.print("Enter Product ID: ");
+                    int productId = Integer.parseInt(scanner.nextLine());
+                    Product product = ProductManager.getProductById(productId);
+                    
+                    if (product == null) {
+                        System.out.println("Product not found!");
+                        continue;
+                    }
 
-    private static void handleAddToCart(Customer customer) {
-        try {
-            System.out.print("Enter Product ID: ");
-            int productId = Integer.parseInt(scanner.nextLine());
-            Product product = ProductManager.getProductById(productId);
-            
-            if (product == null) {
-                System.out.println("Product not found!");
-                return;
-            }
+                    System.out.print("Enter Quantity: ");
+                    int quantity = Integer.parseInt(scanner.nextLine());
+                    
+                    if (quantity < 1) {
+                        System.out.println("Quantity must be at least 1!");
+                        continue;
+                    }
+                    
+                    if (quantity > product.getStockQuantity()) {
+                        System.out.println("Insufficient stock! Available: " + product.getStockQuantity());
+                        continue;
+                    }
 
-            System.out.print("Enter Quantity: ");
-            int quantity = Integer.parseInt(scanner.nextLine());
-            
-            if (quantity < 1) {
-                System.out.println("Quantity must be at least 1!");
-                return;
+                    customer.getCart().addItem(product, quantity);
+                    product.reduceStock(quantity);
+                    System.out.println("\n" + quantity + " x " + product.getName() + " added to cart!");
+                    
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input! Please enter numbers only.");
+                }
             }
-            
-            if (quantity > product.getStockQuantity()) {
-                System.out.println("Insufficient stock! Available: " + product.getStockQuantity());
-                return;
-            }
-
-            customer.getCart().addItem(product, quantity);
-            product.reduceStock(quantity);
-            System.out.println("\n" + quantity + " x " + product.getName() + " added to cart!");
-            
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input! Please enter numbers only.");
         }
     }
 
@@ -218,22 +217,23 @@ public class Main {
     }
 
     private static void viewCart(Customer customer) {
-        System.out.println("\n═════════ Your Cart ═════════");
-        List<CartItem> items = customer.getCart().getItems();
+        Product[] items = customer.getCart().getItems();
+        int[] quantities = customer.getCart().getQuantities();
         
-        if (items.isEmpty()) {
+        System.out.println("\n======== Your Cart ========");
+        if (items.length == 0) {
             System.out.println("Your cart is empty!");
             return;
         }
 
-        items.forEach(item -> {
+        for (int i = 0; i < items.length; i++) {
             System.out.printf("%d x %s - $%.2f\n", 
-                item.getQuantity(), 
-                item.getProduct().getName(), 
-                item.getTotalPrice());
-        });
+                quantities[i], 
+                items[i].getName(), 
+                items[i].getPrice() * quantities[i]);
+        }
         
         System.out.printf("\nTotal: $%.2f\n", customer.getCart().getTotal());
-        System.out.println("══════════════════════════════");
+        System.out.println("=====================");
     }
 }

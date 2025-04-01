@@ -1,32 +1,40 @@
 package java_assignment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 public class Cart {
-    private List<CartItem> items = new ArrayList<>();
+    private Product[] items = new Product[0];
+    private int[] quantities = new int[0];
 
-    // Add item to cart with quantity
     public void addItem(Product product, int quantity) {
-        // Check for existing product in cart
-        for (CartItem item : items) {
-            if (item.getProduct().getProductID() == product.getProductID()) {
-                item.setQuantity(item.getQuantity() + quantity);
+        // Check for existing product
+        for (int i = 0; i < items.length; i++) {
+            if (items[i].getProductID() == product.getProductID()) {
+                quantities[i] += quantity;
                 return;
             }
         }
-        items.add(new CartItem(product, quantity));
+
+        // Add new item
+        items = Arrays.copyOf(items, items.length + 1);
+        quantities = Arrays.copyOf(quantities, quantities.length + 1);
+        items[items.length - 1] = product;
+        quantities[quantities.length - 1] = quantity;
     }
 
-    // Get all cart items
-    public List<CartItem> getItems() {
-        return new ArrayList<>(items);
+    public Product[] getItems() {
+        return Arrays.copyOf(items, items.length);
     }
 
-    // Calculate total price
+    public int[] getQuantities() {
+        return Arrays.copyOf(quantities, quantities.length);
+    }
+
     public double getTotal() {
-        return items.stream()
-                .mapToDouble(CartItem::getTotalPrice)
-                .sum();
+        double total = 0;
+        for (int i = 0; i < items.length; i++) {
+            total += items[i].getPrice() * quantities[i];
+        }
+        return total;
     }
 }

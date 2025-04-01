@@ -20,7 +20,7 @@ public class Computer extends Product {
         System.out.println("=== Computer Details ===");
         System.out.println("ID: " + getProductID());
         System.out.println("Name: " + getName());
-        System.out.printf("Price: $%.2f\n", getPrice());
+        System.out.printf("Price: RM%.2f\n", getPrice());
         System.out.println("Stock: " + getStockQuantity());
         System.out.println("Processor: " + processorType);
         System.out.println("RAM: " + ramSize + "GB");

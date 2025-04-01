@@ -20,7 +20,7 @@ public class Accessory extends Product {
         System.out.println("=== Accessory Details ===");
         System.out.println("ID: " + getProductID());
         System.out.println("Name: " + getName());
-        System.out.printf("Price: $%.2f\n", getPrice());
+        System.out.printf("Price: RM%.2f\n", getPrice());
         System.out.println("Stock: " + getStockQuantity());
         System.out.println("Material: " + material);
         System.out.println("Color: " + color);
