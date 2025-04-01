@@ -5,73 +5,58 @@ import java.util.Scanner;
 
 
 
+
 public class Main {
-    
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        String selection, name, password, email;
-        
-        Display display = new Display();
-        display.welcome();
-        selection = input.next();
-        selection = display.selection(selection);
-        
-        if(selection.equals("L") && selection.equals("LOGIN")){
-            name = display.getName();
-            password = display.getPassword();
-        }else if(selection.equals("R") && selection.equals("REGISTER")){
-            name = display.getName();
-            password = display.getPassword();
-            email = display.getEmail();
-        }
-    }
-}
+        String selection, username, password, name, email, role;
 
-class Display {
-    
-    public void welcome(){
-        System.out.println("Hello, welcome to PRXXT Store!");
-        System.out.println("==============================");
+        System.out.println("Hello, welcome to Xyber Glaxy Store!");
+        System.out.println("====================================");
         System.out.print("Login(L) Or Register(R): ");
-    }
-    
-    public String selection(String selection){
-        Scanner input = new Scanner(System.in);
-        selection = selection.toUpperCase();
-        while(!selection.equals("L") && !selection.equals("LOGIN") && !selection.equals("R") && !selection.equals("REGISTER")){
+        selection = input.nextLine().toUpperCase();
+
+        while (!selection.equals("L") && !selection.equals("LOGIN") && !selection.equals("R") && !selection.equals("REGISTER")) {
             System.out.println("Invalid Input! Please Try Again!");
             System.out.print("Login(L) Or Register(R): ");
-            selection = input.next();
-            selection = selection.toUpperCase();
+            selection = input.nextLine().toUpperCase();
         }
-        
-        return selection;
-    }
-    
-    public String getName(){
-        Scanner input = new Scanner(System.in);
-        String name;
-        System.out.print("Enter your name: ");
-        name = input.next();
-        return name;
-    }
-    
-    public String getPassword(){
-        Scanner input = new Scanner(System.in);
-        String password;
-        System.out.print("Enter your password: ");
-        password = input.next();
-        return password;
-    }
-        
 
-    public String getEmail(){
-        Scanner input = new Scanner(System.in);
-        String email;
-        System.out.print("Enter your email: ");
-        email = input.next();
-        return email;
+        if (selection.equals("R") || selection.equals("REGISTER")) {
+            System.out.print("Enter role (Customer): ");
+            role = input.nextLine().trim();
+
+            if (role.equalsIgnoreCase("Admin")) {
+                System.out.println("Admin cannot register. Please login instead.");
+                return;
+            } else if (!role.equalsIgnoreCase("Customer")) {
+                System.out.println("Invalid role. Only Customer can register.");
+                return;
+            }
+
+            System.out.print("Enter username: ");
+            username = input.nextLine();
+            System.out.print("Enter password: ");
+            password = input.nextLine();
+            System.out.print("Enter name: ");
+            name = input.nextLine();
+            System.out.print("Enter email: ");
+            email = input.nextLine();
+
+            UserManager.registerUser(username, password, name, email, role);
+        } else {
+            System.out.print("Enter username: ");
+            username = input.nextLine();
+            System.out.print("Enter password: ");
+            password = input.nextLine();
+            User user = UserManager.login(username, password);
+            if (user != null) {
+                if (user instanceof Customer) {
+                    System.out.println("Logged in as Customer");
+                } else if (user instanceof Admin) {
+                    System.out.println("Logged in as Admin");
+                }
+            }
+        }
     }
-       
 }
-
