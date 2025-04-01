@@ -1,5 +1,6 @@
 package java_assignment;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -14,9 +15,11 @@ public class Main {
             String role = selectRole(scanner);
             
             if (role.equals("admin")) {
-                if (handleAdminFlow(scanner)) break;
+                if (handleAdminFlow(scanner)) 
+                    break;
             } else {
-                if (handleCustomerFlow(scanner)) break;
+                if (handleCustomerFlow(scanner)) 
+                    break;
             }
         }
         scanner.close();
@@ -31,9 +34,12 @@ public class Main {
             
             String choice = scanner.nextLine().trim();
             switch (choice) {
-                case "1": return "admin";
-                case "2": return "customer";
-                default: System.out.println("Invalid choice! Please enter 1 or 2");
+                case "1": 
+                    return "admin";
+                case "2": 
+                    return "customer";
+                default: 
+                    System.out.println("Invalid choice! Please enter 1 or 2");
             }
         }
     }
@@ -101,16 +107,43 @@ public class Main {
         scanner.nextLine();  // Wait for input
     }
 
+   // Main.java (partial update)
     private static void showCustomerMenu(Scanner scanner) {
-        System.out.println("\n═════════ Shopping Portal ═════════");
-        System.out.println("1. View Products");
-        System.out.println("2. View Cart");
-        System.out.println("3. View Wishlist");
-        System.out.println("4. Checkout");
-        System.out.println("5. Logout");
-        System.out.print("Enter choice (1-5): ");
+        while (true) {
+            System.out.println("\n═════════ Shopping Portal ═════════");
+            System.out.println("1. View Products");
+            System.out.println("2. View Cart");
+            System.out.println("3. View Wishlist");
+            System.out.println("4. Checkout");
+            System.out.println("5. Logout");
+            System.out.print("Enter choice (1-5): ");
         
-        // Add customer menu functionality here
-        scanner.nextLine();  // Wait for input
+        String choice = scanner.nextLine().trim();
+        switch (choice) {
+            case "1":
+                displayProducts();
+                break;
+            case "5":
+                return;
+            default:
+                System.out.println("Feature not implemented yet!");
+            }
+        }
+    }
+
+    private static void displayProducts() {
+        System.out.println("\n═════════ Available Products ═════════");
+        List<Product> products = ProductManager.listProducts();
+    
+        if (products.isEmpty()) {
+        System.out.println("No products available!");
+        return;
+        }
+
+        for (Product product : products) {
+            product.printDetails();
+            System.out.println();
+        }
+        System.out.println("═══════════════════════════════════════");
     }
 }
