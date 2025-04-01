@@ -35,11 +35,11 @@ public abstract class Product implements Printable {
 
     // Stock management
     public void reduceStock(int quantity) {
-        stockQuantity = Math.max(0, stockQuantity - quantity);
+    stockQuantity = Math.max(0, stockQuantity - quantity);
     }
 
     public void increaseStock(int quantity) {
-        stockQuantity += quantity;
+    stockQuantity += quantity;
     }
 
     public abstract String getCategory();

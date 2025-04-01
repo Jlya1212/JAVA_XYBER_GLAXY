@@ -1,31 +1,29 @@
 package java_assignment;
 
-import java.util.List;
 import java.util.Scanner;
+import java.util.List;
 
 public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("+==================================+");
-        System.out.println("+   Welcome to Xyber Glaxy Store   +");
-        System.out.println("+==================================+");
+        System.out.println("╔══════════════════════════════════╗");
+        System.out.println("║   Welcome to Xyber Glaxy Store   ║");
+        System.out.println("╚══════════════════════════════════╝");
         
         while (true) {
-            String role = selectRole(scanner);
+            String role = selectRole();
             
             if (role.equals("admin")) {
-                if (handleAdminFlow(scanner)) 
-                    break;
+                if (handleAdminFlow()) break;
             } else {
-                if (handleCustomerFlow(scanner)) 
-                    break;
+                if (handleCustomerFlow()) break;
             }
         }
         scanner.close();
     }
 
-    private static String selectRole(Scanner scanner) {
+    private static String selectRole() {
         while (true) {
             System.out.println("\nSelect your role:");
             System.out.println("1. Admin");
@@ -41,21 +39,21 @@ public class Main {
         }
     }
 
-    private static boolean handleAdminFlow(Scanner scanner) {
-        System.out.println("\n======== Admin Login ========");
+    private static boolean handleAdminFlow() {
+        System.out.println("\n═════════ Admin Login ═════════");
         User user = UserManager.login(scanner);
         
         if (user instanceof Admin) {
             System.out.println("\nLogin successful! Welcome back " + user.getName());
-            showAdminMenu(scanner);
+            showAdminMenu();
             return true;
         }
         System.out.println("\nReturning to main menu...");
         return false;
     }
 
-    private static boolean handleCustomerFlow(Scanner scanner) {
-        System.out.println("\n======== Customer Portal ========");
+    private static boolean handleCustomerFlow() {
+        System.out.println("\n═════════ Customer Portal ═════════");
         System.out.println("1. Login");
         System.out.println("2. Register");
         System.out.println("3. Back to Main Menu");
@@ -64,37 +62,44 @@ public class Main {
         String choice = scanner.nextLine().trim();
         switch (choice) {
             case "1":
-                User user = UserManager.login(scanner);
-                if (user instanceof Customer) {
-                    System.out.println("\nWelcome back " + user.getName() + "!");
-                    showCustomerMenu(scanner);
-                    return true;
-                }
-                return false;
-
+                return handleCustomerLogin();
             case "2":
-                UserManager.registerUser(scanner);
-                System.out.println("\nRegistration successful! Please login:");
-                user = UserManager.login(scanner);
-                if (user instanceof Customer) {
-                    System.out.println("\nWelcome to Xyber Glaxy " + user.getName() + "!");
-                    showCustomerMenu(scanner);
-                    return true;
-                }
-                return false;
-
+                return handleCustomerRegistration();
             case "3":
                 return true;
-
             default:
                 System.out.println("Invalid choice!");
                 return false;
         }
     }
 
-    private static void showAdminMenu(Scanner scanner) {
+    private static boolean handleCustomerLogin() {
+        User user = UserManager.login(scanner);
+        if (user instanceof Customer) {
+            Customer customer = (Customer) user;
+            System.out.println("\nWelcome back " + customer.getName() + "!");
+            showCustomerMenu(customer);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean handleCustomerRegistration() {
+        UserManager.registerUser(scanner);
+        System.out.println("\nRegistration successful! Please login:");
+        User user = UserManager.login(scanner);
+        if (user instanceof Customer) {
+            Customer customer = (Customer) user;
+            System.out.println("\nWelcome to Xyber Glaxy " + customer.getName() + "!");
+            showCustomerMenu(customer);
+            return true;
+        }
+        return false;
+    }
+
+    private static void showAdminMenu() {
         while (true) {
-            System.out.println("\n======== Admin Dashboard ========");
+            System.out.println("\n═════════ Admin Dashboard ═════════");
             System.out.println("1. View Low Stock Alerts");
             System.out.println("2. Manage Products");
             System.out.println("3. View Orders");
@@ -107,9 +112,9 @@ public class Main {
         }
     }
 
-    private static void showCustomerMenu(Scanner scanner) {
+    private static void showCustomerMenu(Customer customer) {
         while (true) {
-            System.out.println("\n======== Shopping Portal ========");
+            System.out.println("\n═════════ Shopping Portal ═════════");
             System.out.println("1. View Products");
             System.out.println("2. View Cart");
             System.out.println("3. View Wishlist");
@@ -120,7 +125,10 @@ public class Main {
             String choice = scanner.nextLine().trim();
             switch (choice) {
                 case "1":
-                    displayProducts(scanner);
+                    displayProducts(customer);
+                    break;
+                case "2":
+                    viewCart(customer);
                     break;
                 case "5":
                     return;
@@ -130,24 +138,66 @@ public class Main {
         }
     }
 
-    private static void displayProducts(Scanner scanner) {
-        String category = selectProductCategory(scanner);
+    private static void displayProducts(Customer customer) {
+        String category = selectProductCategory();
         List<Product> products = ProductManager.getProductsByCategory(category);
         
-        System.out.println("\n======== " + category + " Products ========");
+        System.out.println("\n═════════ " + category + " Products ═════════");
         if (products.isEmpty()) {
             System.out.println("No products found in this category!");
             return;
         }
 
-        for (Product product : products) {
-            product.printDetails();
-            System.out.println();
+        products.forEach(Product::printDetails);
+        
+        while (true) {
+            System.out.println("\n[1] Add to Cart");
+            System.out.println("[2] Back to Menu");
+            System.out.print("Enter choice: ");
+            String choice = scanner.nextLine().trim();
+
+            if (choice.equals("2")) break;
+
+            if (choice.equals("1")) {
+                handleAddToCart(customer);
+            }
         }
-        System.out.println("=============================");
     }
 
-    private static String selectProductCategory(Scanner scanner) {
+    private static void handleAddToCart(Customer customer) {
+        try {
+            System.out.print("Enter Product ID: ");
+            int productId = Integer.parseInt(scanner.nextLine());
+            Product product = ProductManager.getProductById(productId);
+            
+            if (product == null) {
+                System.out.println("Product not found!");
+                return;
+            }
+
+            System.out.print("Enter Quantity: ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+            
+            if (quantity < 1) {
+                System.out.println("Quantity must be at least 1!");
+                return;
+            }
+            
+            if (quantity > product.getStockQuantity()) {
+                System.out.println("Insufficient stock! Available: " + product.getStockQuantity());
+                return;
+            }
+
+            customer.getCart().addItem(product, quantity);
+            product.reduceStock(quantity);
+            System.out.println("\n" + quantity + " x " + product.getName() + " added to cart!");
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter numbers only.");
+        }
+    }
+
+    private static String selectProductCategory() {
         while (true) {
             System.out.println("\nSelect product category:");
             System.out.println("1. All Products");
@@ -165,5 +215,25 @@ public class Main {
                 default: System.out.println("Invalid choice! Please enter 1-4");
             }
         }
+    }
+
+    private static void viewCart(Customer customer) {
+        System.out.println("\n═════════ Your Cart ═════════");
+        List<CartItem> items = customer.getCart().getItems();
+        
+        if (items.isEmpty()) {
+            System.out.println("Your cart is empty!");
+            return;
+        }
+
+        items.forEach(item -> {
+            System.out.printf("%d x %s - $%.2f\n", 
+                item.getQuantity(), 
+                item.getProduct().getName(), 
+                item.getTotalPrice());
+        });
+        
+        System.out.printf("\nTotal: $%.2f\n", customer.getCart().getTotal());
+        System.out.println("══════════════════════════════");
     }
 }

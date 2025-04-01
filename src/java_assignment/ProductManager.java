@@ -26,7 +26,7 @@ public class ProductManager {
     }
 
     public static Product getProductById(int productId) {
-        return products.stream()
+    return products.stream()
             .filter(p -> p.getProductID() == productId)
             .findFirst()
             .orElse(null);
