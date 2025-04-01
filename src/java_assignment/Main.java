@@ -1,71 +1,116 @@
-
 package java_assignment;
 
 import java.util.Scanner;
 
-
-
-
 public class Main {
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        String role, selection, username, password, name, email;
-
-        System.out.println("Hello, welcome to Xyber Glaxy Store!");
-        System.out.println("====================================");
-
-        // Prompt for role first
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("+==================================+");
+        System.out.println("+   Welcome to Xyber Glaxy Store   +");
+        System.out.println("+==================================+");
+        
         while (true) {
-            System.out.print("Select role (Customer/Admin): ");
-            role = input.nextLine().trim().toLowerCase();
-            if (role.equals("customer") || role.equals("admin")) {
-                break;
-            }
-            System.out.println("Invalid role. Please enter Customer or Admin.");
-        }
-
-        if (role.equals("admin")) {
-            // Admin can only log in
-            System.out.print("Enter username: ");
-            username = input.nextLine();
-            System.out.print("Enter password: ");
-            password = input.nextLine();
-            User user = UserManager.login(username, password);
-            if (user != null) {
-                System.out.println("Logged in as Admin");
-            }
-        } else {
-            // Customer: choose to log in or register
-            System.out.print("Login(L) Or Register(R): ");
-            selection = input.nextLine().toUpperCase();
-            while (!selection.equals("L") && !selection.equals("LOGIN") && !selection.equals("R") && !selection.equals("REGISTER")) {
-                System.out.println("Invalid Input! Please Try Again!");
-                System.out.print("Login(L) Or Register(R): ");
-                selection = input.nextLine().toUpperCase();
-            }
-
-            if (selection.equals("R") || selection.equals("REGISTER")) {
-                // Customer registration
-                System.out.print("Enter username: ");
-                username = input.nextLine();
-                System.out.print("Enter password: ");
-                password = input.nextLine();
-                System.out.print("Enter name: ");
-                name = input.nextLine();
-                System.out.print("Enter email: ");
-                email = input.nextLine();
-                UserManager.registerUser(username, password, name, email, "Customer");
+            String role = selectRole(scanner);
+            
+            if (role.equals("admin")) {
+                if (handleAdminFlow(scanner)) break;
             } else {
-                // Customer login
-                System.out.print("Enter username: ");
-                username = input.nextLine();
-                System.out.print("Enter password: ");
-                password = input.nextLine();
-                User user = UserManager.login(username, password);
-                if (user != null) {
-                    System.out.println("Logged in as Customer");
-                }
+                if (handleCustomerFlow(scanner)) break;
             }
         }
+        scanner.close();
+    }
+
+    private static String selectRole(Scanner scanner) {
+        while (true) {
+            System.out.println("\nSelect your role:");
+            System.out.println("1. Admin");
+            System.out.println("2. Customer");
+            System.out.print("Enter choice (1-2): ");
+            
+            String choice = scanner.nextLine().trim();
+            switch (choice) {
+                case "1": return "admin";
+                case "2": return "customer";
+                default: System.out.println("Invalid choice! Please enter 1 or 2");
+            }
+        }
+    }
+
+    private static boolean handleAdminFlow(Scanner scanner) {
+        System.out.println("\n========= Admin Login =========");
+        User user = UserManager.login(scanner);
+        
+        if (user instanceof Admin) {
+            System.out.println("\nLogin successful! Welcome back " + user.getName());
+            showAdminMenu(scanner);
+            return true;
+        }
+        System.out.println("\nReturning to main menu...");
+        return false;
+    }
+
+    private static boolean handleCustomerFlow(Scanner scanner) {
+        System.out.println("\n========= Customer Portal =========");
+        System.out.println("1. Login");
+        System.out.println("2. Register");
+        System.out.println("3. Back to Main Menu");
+        System.out.print("Enter choice (1-3): ");
+
+        String choice = scanner.nextLine().trim();
+        switch (choice) {
+            case "1":
+                User user = UserManager.login(scanner);
+                if (user instanceof Customer) {
+                    System.out.println("\nWelcome back " + user.getName() + "!");
+                    showCustomerMenu(scanner);
+                    return true;
+                }
+                return false;
+
+            case "2":
+                UserManager.registerUser(scanner);
+                System.out.println("\nRegistration successful! Please login:");
+                user = UserManager.login(scanner);
+                if (user instanceof Customer) {
+                    System.out.println("\nWelcome to Xyber Glaxy " + user.getName() + "!");
+                    showCustomerMenu(scanner);
+                    return true;
+                }
+                return false;
+
+            case "3":
+                return true;
+
+            default:
+                System.out.println("Invalid choice!");
+                return false;
+        }
+    }
+
+    private static void showAdminMenu(Scanner scanner) {
+        System.out.println("\n═════════ Admin Dashboard ═════════");
+        System.out.println("1. View Low Stock Alerts");
+        System.out.println("2. Manage Products");
+        System.out.println("3. View Orders");
+        System.out.println("4. Logout");
+        System.out.print("Enter choice (1-4): ");
+        
+        // Add admin menu functionality here
+        scanner.nextLine();  // Wait for input
+    }
+
+    private static void showCustomerMenu(Scanner scanner) {
+        System.out.println("\n═════════ Shopping Portal ═════════");
+        System.out.println("1. View Products");
+        System.out.println("2. View Cart");
+        System.out.println("3. View Wishlist");
+        System.out.println("4. Checkout");
+        System.out.println("5. Logout");
+        System.out.print("Enter choice (1-5): ");
+        
+        // Add customer menu functionality here
+        scanner.nextLine();  // Wait for input
     }
 }
