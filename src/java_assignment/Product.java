@@ -7,7 +7,8 @@ public abstract class Product implements Printable {
     private double price;
     private int stockQuantity;
 
-    public Product(int productID, String name, String description, double price, int stockQuantity) {
+    public Product(int productID, String name, String description, 
+                  double price, int stockQuantity) {
         this.productID = productID;
         this.name = name;
         this.description = description;
@@ -41,7 +42,5 @@ public abstract class Product implements Printable {
         stockQuantity += quantity;
     }
 
-    // Abstract method to be implemented by subclasses
-    @Override
-    public abstract void printDetails();
+    public abstract String getCategory();
 }
