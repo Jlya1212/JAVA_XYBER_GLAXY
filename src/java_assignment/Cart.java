@@ -37,4 +37,10 @@ public class Cart {
         }
         return total;
     }
+    
+    public void clear(){
+        items = new Product[0];
+        quantities = new int[0];
+    }
+    
 }

@@ -131,10 +131,13 @@ public class Main {
                 case "3":
                     viewWishlist(customer);
                     break;
+                case "4": 
+                    handleCheckout(customer);
+                    break;
                 case "5":
                     return;
                 default:
-                    System.out.println("Feature under development!");
+                    System.out.println("Invalid Choice!");
             }
         }
     }
@@ -310,11 +313,34 @@ public class Main {
             }
         }
     }
-        private static void handleAddToWishlist(Customer customer, Product product) {
+    
+    private static void handleAddToWishlist(Customer customer, Product product) {
         if (customer.getWishlist().addItem(product)) {
             System.out.println(product.getName() + " added to wishlist!");
         } else {
             System.out.println("Product already in wishlist!");
+        }
+    }
+    
+    private static void handleCheckout(Customer customer) {
+        Cart cart = customer.getCart();
+    
+        if(cart.getItems().length == 0) {
+            System.out.println("Your cart is empty!");
+            return;
+        }
+    
+        viewCart(customer); // Show cart contents
+    
+        // Apply discount
+        System.out.print("Enter discount code (or press enter to skip): ");
+        String discountCode = scanner.nextLine().trim();
+        if(discountCode.isEmpty()) discountCode = null;
+    
+        if(OrderManager.placeOrder(customer, discountCode)) {
+            System.out.println("Order placed successfully!");
+        } else {
+            System.out.println("Checkout failed. Please try again.");
         }
     }
 }
