@@ -128,6 +128,9 @@ public class Main {
                 case "2":
                     viewCart(customer);
                     break;
+                case "3":
+                    viewWishlist(customer);
+                    break;
                 case "5":
                     return;
                 default:
@@ -157,44 +160,61 @@ public class Main {
     private static void handleProductSelection(Customer customer) {
         while (true) {
             System.out.println("\n[1] Add to Cart");
-            System.out.println("[2] Back to Menu");
+            System.out.println("[2] Add to Wishlist");
+            System.out.println("[3] Back to Menu");
             System.out.print("Enter choice: ");
             String choice = scanner.nextLine().trim();
 
-            if (choice.equals("2")) break;
+            if (choice.equals("3")) break;
 
-            if (choice.equals("1")) {
-                try {
-                    System.out.print("Enter Product ID: ");
-                    int productId = Integer.parseInt(scanner.nextLine());
-                    Product product = ProductManager.getProductById(productId);
-                    
-                    if (product == null) {
-                        System.out.println("Product not found!");
-                        continue;
-                    }
-
-                    System.out.print("Enter Quantity: ");
-                    int quantity = Integer.parseInt(scanner.nextLine());
-                    
-                    if (quantity < 1) {
-                        System.out.println("Quantity must be at least 1!");
-                        continue;
-                    }
-                    
-                    if (quantity > product.getStockQuantity()) {
-                        System.out.println("Insufficient stock! Available: " + product.getStockQuantity());
-                        continue;
-                    }
-
-                    customer.getCart().addItem(product, quantity);
-                    product.reduceStock(quantity);
-                    System.out.println("\n" + quantity + " x " + product.getName() + " added to cart!");
-                    
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input! Please enter numbers only.");
+            try {
+                System.out.print("Enter Product ID: ");
+                int productId = Integer.parseInt(scanner.nextLine());
+                Product product = ProductManager.getProductById(productId);
+            
+                if (product == null) {
+                    System.out.println("Product not found!");
+                    continue;
                 }
+
+                switch(choice) {
+                    case "1":
+                        handleAddToCart(customer, product);
+                        break;
+                    case "2":
+                        customer.getWishlist().addItem(product);
+                        System.out.println(product.getName() + " added to wishlist!");
+                        break;
+                    default:
+                        System.out.println("Invalid choice!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter numbers only.");
             }
+        }
+    }
+
+    private static void handleAddToCart(Customer customer, Product product) {
+        try {
+            System.out.print("Enter Quantity: ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+        
+            if (quantity < 1) {
+                System.out.println("Quantity must be at least 1!");
+                return;
+            }
+        
+            if (quantity > product.getStockQuantity()) {
+                System.out.println("Insufficient stock! Available: " + product.getStockQuantity());
+                return;
+            }
+
+        customer.getCart().addItem(product, quantity);
+        product.reduceStock(quantity);
+        System.out.println("\n" + quantity + " x " + product.getName() + " added to cart!");
+        
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter numbers only.");
         }
     }
 
@@ -236,6 +256,65 @@ public class Main {
         }
         
         System.out.printf("\nTotal: $%.2f\n", customer.getCart().getTotal());
-        System.out.println("=====================");
+        System.out.println("===================");
+    }
+    
+    private static void viewWishlist(Customer customer) {
+        Wishlist wishlist = customer.getWishlist();
+    
+        while (true) {
+            // Display wishlist contents
+            System.out.println("\n======== Wishlist ========");
+            Product[] items = wishlist.getItems();
+            if (items.length == 0) {
+                System.out.println("Your wishlist is empty!");
+                System.out.println("==========================");
+                return; // Auto-return to menu
+            }
+
+            for (Product item : items) {
+                item.printDetails();
+                System.out.println();
+            }
+            System.out.println("=========================");
+
+            // Show options only if not empty
+            System.out.println("\n[1] Remove Item");
+            System.out.println("[2] Back to Menu");
+            System.out.print("Enter choice: ");
+            String choice = scanner.nextLine().trim();
+
+            if (choice.equals("2")) {
+                return;
+            } else if (choice.equals("1")) {
+                try {
+                    System.out.print("Enter Product ID to remove: ");
+                    int productId = Integer.parseInt(scanner.nextLine());
+                
+                    if (wishlist.removeItem(productId)) {
+                        System.out.println("Item removed successfully!");
+                    
+                        // Auto-return if wishlist became empty
+                        if (wishlist.isEmpty()) {
+                            System.out.println("Wishlist is now empty!");
+                            return;
+                        }
+                    } else {
+                        System.out.println("Product not found in wishlist!");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input! Please enter numbers only.");
+                }
+            } else {
+                System.out.println("Invalid choice!");
+            }
+        }
+    }
+        private static void handleAddToWishlist(Customer customer, Product product) {
+        if (customer.getWishlist().addItem(product)) {
+            System.out.println(product.getName() + " added to wishlist!");
+        } else {
+            System.out.println("Product already in wishlist!");
+        }
     }
 }
