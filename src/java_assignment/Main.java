@@ -14,9 +14,11 @@ public class Main {
             String role = selectRole();
             
             if (role.equals("admin")) {
-                if (handleAdminFlow()) break;
+                if (handleAdminFlow())
+                    break;
             } else {
-                if (handleCustomerFlow()) break;
+                if (handleCustomerFlow()) 
+                    break;
             }
         }
         scanner.close();
