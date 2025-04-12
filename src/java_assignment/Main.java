@@ -101,11 +101,12 @@ public class Main {
             System.out.println("1. View Low Stock Alerts");
             System.out.println("2. Manage Products");
             System.out.println("3. View Orders");
-            System.out.println("4. Logout");
-            System.out.print("Enter choice (1-4): ");
+            System.out.println("4. Manage Discounts");
+            System.out.println("5. Logout");
+            System.out.print("Enter choice (1-5): ");
             
             String choice = scanner.nextLine().trim();
-            if (choice.equals("4")) return;
+            if (choice.equals("5")) return;
             System.out.println("Feature under development!");
         }
     }
