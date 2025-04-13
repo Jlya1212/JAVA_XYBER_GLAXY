@@ -1,37 +1,50 @@
 package java_assignment;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class ProductManager {
-    private static Product[] products = new Product[0];
-    private static int productCount = 0;
+    // List to store all product objects
+    private List<Product> products;
 
-    static {
+    // Constructor - adds some default products for testing
+    public ProductManager() {
+        products = new ArrayList<>();
+
+        // Sample Data
         addProduct(new Computer(1001, "Gaming Laptop", "High-performance gaming laptop", 1499.99, 10, "Intel i7-12700H", 32, 1000));
-        
-        addProduct(new Peripheral(2001, "Wireless Mouse", "Ergonomic optical mouse", 49.99, 25, "Bluetooth", new String[] {"Windows", "macOS"}));
-        
+        addProduct(new Peripheral(2001, "Wireless Mouse", "Ergonomic optical mouse", 49.99, 25, "Bluetooth", new String[]{"Windows", "macOS"}));
         addProduct(new Accessory(3001, "Mechanical Keyboard", "RGB backlit keyboard", 129.99, 15, "Aluminum", "Black"));
     }
 
-    public static void addProduct(Product product) {
-        products = Arrays.copyOf(products, products.length + 1);
-        products[productCount++] = product;
+    // 1. Add a product
+    public void addProduct(Product product) {
+        products.add(product);
     }
 
-    public static Product[] getProductsByCategory(String category) {
-        Product[] result = new Product[products.length];
-        int count = 0;
-        
-        for (Product p : products) {
-            if (p.getCategory().equalsIgnoreCase(category)) {
-                result[count++] = p;
-            }
+    // 2. Delete a product by ID
+    public boolean deleteProduct(int productId) {
+        Product p = getProductById(productId);
+        if (p != null) {
+            products.remove(p);
+            return true;
         }
-        return Arrays.copyOf(result, count);
+        return false;
     }
 
-    public static Product getProductById(int productId) {
+    // 3. Update a product by ID (using updateFromInput from Printable)
+    public boolean updateProduct(int productId, Scanner scanner) {
+        Product p = getProductById(productId);
+        if (p != null) {
+            p.updateFromInput(scanner);
+            return true;
+        }
+        return false;
+    }
+
+    // 4. Search for a product by ID
+    public Product getProductById(int productId) {
         for (Product p : products) {
             if (p.getProductID() == productId) {
                 return p;
@@ -40,7 +53,19 @@ public class ProductManager {
         return null;
     }
 
-    public static Product[] listProducts() {
-        return Arrays.copyOf(products, products.length);
+    // 5. Get all products as array
+    public Product[] listProducts() {
+        return products.toArray(new Product[0]);
+    }
+
+    // 6. Get all products from a specific category
+    public Product[] getProductsByCategory(String category) {
+        List<Product> filtered = new ArrayList<>();
+        for (Product p : products) {
+            if (p.getCategory().equalsIgnoreCase(category)) {
+                filtered.add(p);
+            }
+        }
+        return filtered.toArray(new Product[0]);
     }
 }
