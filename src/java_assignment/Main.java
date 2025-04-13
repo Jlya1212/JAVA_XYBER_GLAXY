@@ -326,7 +326,9 @@ public class Main {
     
     private static void handleCheckout(Customer customer) {
         Cart cart = customer.getCart();
-    
+        DiscountManager dm = new DiscountManager();
+        OrderManager om = new OrderManager();
+        double totalAmount = getPrice();
         if(cart.getItems().length == 0) {
             System.out.println("Your cart is empty!");
             return;
@@ -337,9 +339,14 @@ public class Main {
         // Apply discount
         System.out.print("Enter discount code (or press enter to skip): ");
         String discountCode = scanner.nextLine().trim();
-        if(discountCode.isEmpty()) discountCode = null;
+        if(discountCode.isEmpty()){ discountCode = null;}
+        else{
+            double percentage = dm.CodeValidation(discountCode);
     
-        if(OrderManager.placeOrder(customer, discountCode)) {
+                }
+        
+    
+        if(om.placeOrder(customer, discountCode)) {
             System.out.println("Order placed successfully!");
         } else {
             System.out.println("Checkout failed. Please try again.");
