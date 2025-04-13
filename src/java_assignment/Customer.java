@@ -1,5 +1,6 @@
 package java_assignment;
 
+// 2. This class represents a normal user with a shopping cart and wishlist
 public class Customer extends User {
     private Cart cart = new Cart();
     private Wishlist wishlist = new Wishlist();
@@ -8,7 +9,6 @@ public class Customer extends User {
         super(username, password, name, email);
     }
 
-    // Add this method
     public Cart getCart() {
         return cart;
     }

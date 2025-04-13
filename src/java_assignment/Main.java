@@ -4,7 +4,8 @@ import java.util.Scanner;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
-
+    private ProductManager pmanager = new ProductManager(); 
+    
     public static void main(String[] args) {
         System.out.println("+==================================+");
         System.out.println("+   Welcome to Xyber Glaxy Store   +");
@@ -144,7 +145,7 @@ public class Main {
 
     private static void displayProducts(Customer customer) {
         String category = selectProductCategory();
-        Product[] products = ProductManager.getProductsByCategory(category);
+        Product[] products = pmanager.getProductsByCategory(category);
         
         System.out.println("\n======== " + category + " Products ========");
         if (products.length == 0) {
@@ -173,7 +174,7 @@ public class Main {
             try {
                 System.out.print("Enter Product ID: ");
                 int productId = Integer.parseInt(scanner.nextLine());
-                Product product = ProductManager.getProductById(productId);
+                Product product = pmanager.getProductById(productId);
             
                 if (product == null) {
                     System.out.println("Product not found!");

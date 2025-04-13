@@ -1,6 +1,6 @@
-
 package java_assignment;
 
+// 1. This class is the abstract base for both Admin and Customer
 public abstract class User {
     private String username;
     private String password;
@@ -14,27 +14,21 @@ public abstract class User {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
-    }
+    // Getters
+    public String getUsername() { return username; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
 
-    public String getName() {
-        return name;
-    }
+    // Setters
+    public void setPassword(String password) { this.password = password; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    // Validate password (used in login)
     public boolean validatePassword(String password) {
         return this.password.equals(password);
+    }
+
+    public void printDetails() {
+        System.out.println("Name: " + name + ", Username: " + username + ", Email: " + email);
     }
 }
