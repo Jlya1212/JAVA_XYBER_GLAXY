@@ -85,7 +85,7 @@ public class DiscountManager{
               }
 
               System.out.println(" (" + status + ")");
-              System.out.println("Percentage: " + discounts[i].getPercentage());
+              System.out.println("Percentage: " + discounts[i].getPercentage() + "%");
 
             }
 
