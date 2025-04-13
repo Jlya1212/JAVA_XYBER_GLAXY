@@ -1,46 +1,49 @@
 package java_assignment;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cart {
-    private Product[] items = new Product[0];
-    private int[] quantities = new int[0];
+
+    private List<CartItem> items = new ArrayList<>();
+
 
     public void addItem(Product product, int quantity) {
-        // Check for existing product
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].getProductID() == product.getProductID()) {
-                quantities[i] += quantity;
+        for (CartItem item : items) {
+            if (item.getProduct().getProductID() == product.getProductID()) {
+                item.setQuantity(item.getQuantity() + quantity);
                 return;
             }
         }
-
-        // Add new item
-        items = Arrays.copyOf(items, items.length + 1);
-        quantities = Arrays.copyOf(quantities, quantities.length + 1);
-        items[items.length - 1] = product;
-        quantities[quantities.length - 1] = quantity;
+        items.add(new CartItem(product, quantity));
     }
 
-    public Product[] getItems() {
-        return Arrays.copyOf(items, items.length);
+
+    public boolean removeItem(int productId) {
+        return items.removeIf(item -> item.getProduct().getProductID() == productId);
     }
 
-    public int[] getQuantities() {
-        return Arrays.copyOf(quantities, quantities.length);
+
+    public CartItem[] getItems() {
+        return items.toArray(new CartItem[0]);
     }
+
+
+    public void clear() {
+        items.clear();
+    }
+
 
     public double getTotal() {
         double total = 0;
-        for (int i = 0; i < items.length; i++) {
-            total += items[i].getPrice() * quantities[i];
+        for (CartItem item : items) {
+            total += item.getTotalPrice();
         }
         return total;
     }
-    
-    public void clear(){
-        items = new Product[0];
-        quantities = new int[0];
+
+
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
-    
 }
