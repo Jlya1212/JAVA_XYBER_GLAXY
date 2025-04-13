@@ -4,7 +4,7 @@
  */
 package java_assignment;
 
-import java_assignment.Discount;
+
 import java.util.Scanner;
 
 /**
@@ -19,7 +19,34 @@ public class DiscountManager{
     
     public DiscountManager(){
     }
-    
+
+    public Discount getDiscounts(int address){
+        return discounts[address];
+    }
+
+    public int getCount(){
+        return count;
+    }
+
+    public double CodeValidation(String code){
+        Discount d = new Discount();
+        int num = 0;
+        d.setDiscountCode(code);
+            for(int i=0;i < getCount();i++){
+        if(discounts[i].getDiscountCode().equals(d.getDiscountCode())){
+            if(discounts[i].getIsActive() == true){
+            System.out.println("Valid code!") ;
+            num = i;
+            return discounts[num].getPercentage();
+            }else{
+                System.out.println("The code is overdated!");
+            }
+        }
+     }
+            System.out.println("Invalid Code! Please try again!");
+            return 1;
+    }
+
     public void addCode(){
         double percentage = 0;
         System.out.println("\n");
@@ -39,7 +66,7 @@ public class DiscountManager{
         discounts[count] = d;
         this.count++;
     }
-    
+
     public void displayAllDiscount(){
         System.out.println("=================");
         System.out.println("| All Discounts |");
@@ -48,36 +75,41 @@ public class DiscountManager{
             for(int i = 0; i < count; i++){
               int num = i + 1;
               boolean currentStatus = discounts[i].getIsActive();
-              
+
               System.out.print("Code [" + num + "]: " + discounts[i].getDiscountCode());
-              
+
               if(currentStatus == true){
                   status = "Active";
               }else{
                   status = "Deactive";
               }
-              
+
               System.out.println(" (" + status + ")");
               System.out.println("Percentage: " + discounts[i].getPercentage());
-              
+
             }
-            
+
         System.out.println("=================");
     }
-    
-    public void activeCode(String code){
+
+    public String activeCode(String code){
         for(int i = 0; i < count; i++){
             if(discounts[i].getDiscountCode().equals(code)){
                 discounts[i].setIsActive(true);
+                return "\nSet '" + discounts[i].getDiscountCode() + "' as Active successfully!\n";
             }
         }
+        return "\nProgress unsuccessful! Please try again!\n";
     }
-        
-    public void deactiveCode(String code){
+
+    public String deactiveCode(String code){
         for(int i = 0; i < count; i++){
             if(discounts[i].getDiscountCode().equals(code)){
                 discounts[i].setIsActive(false);
+                return "\nSet '" + discounts[i].getDiscountCode() + "' as Deactive successfully!\n";
             }
         }
+        return "\nProgress unsuccessful! Please try again!\n";
     }
+    
 }
