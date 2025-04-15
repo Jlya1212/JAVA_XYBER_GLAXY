@@ -1,8 +1,11 @@
-package java_assignment;
+package manager;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import java_assignment.User ;
+import java_assignment.Customer;
+import java_assignment.Admin;
+import java_assignment.AdminType;
 public class UserManager {
     private ArrayList<User> users;
 
