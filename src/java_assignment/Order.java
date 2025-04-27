@@ -33,12 +33,12 @@ public class Order implements Printable {
         System.out.println("======== Order #" + orderId + " ========");
         System.out.println("Customer: " + customer.getName());
         for (OrderItem item : items) {
-            System.out.printf("%d x %s - $%.2f\n",
+            System.out.printf("%d x %s - RM%.2f\n",
                     item.getQuantity(),
                     item.getProduct().getName(),
                     item.getTotalPrice());
         }
-        System.out.printf("\nTotal: $%.2f\n", totalPrice);
+        System.out.printf("\nTotal: RM%.2f\n", totalPrice);
         System.out.println("====================");
     }
 }
