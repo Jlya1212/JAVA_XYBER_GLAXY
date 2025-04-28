@@ -22,10 +22,7 @@ public class UserManager {
                  AdminType.SUPER_ADMIN // Give super powers to the first admin
              );
              users.add(defaultAdmin);
-             System.out.println("-> Default SUPER_ADMIN user created.");
-             System.out.println("-> Username: admin");
-             System.out.println("-> Password: password123");
-             System.out.println("-> Please change the password after logging in.");
+             
         }
     }
 

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package java_assignment;
 
 
@@ -23,8 +20,6 @@ public class DiscountManager{
         addCode("NEWUSER", 20.0);
         // Make one inactive for testing
         if (count > 0) discounts[0].setIsActive(false);
-         System.out.println("Discount Manager initialized.");
-         if (count > 0 && !discounts[0].getIsActive()) System.out.println(" - Note: '" + discounts[0].getDiscountCode() + "' is currently inactive.");
     }
 
     // Helper for constructor/testing

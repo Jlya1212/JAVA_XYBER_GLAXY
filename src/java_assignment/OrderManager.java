@@ -13,7 +13,7 @@ public class OrderManager {
              throw new IllegalArgumentException("DiscountManager cannot be null.");
         }
         this.discountManager = discountManager;
-         System.out.println("Order Manager initialized."); // Feedback
+        
     }
 
     public boolean placeOrder(Customer customer, String discountCodeInput) {

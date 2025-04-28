@@ -19,7 +19,6 @@ public class ProductManager {
         addProduct(new Computer(1002, "Office Desktop", "Reliable workstation PC", 799.00, 20, "Intel i5-11400", 16, 512));
         addProduct(new Peripheral(2002, "Webcam", "1080p HD Webcam with Mic", 65.00, 18, "USB", new String[]{"Windows", "macOS"}));
         addProduct(new Accessory(3002, "USB-C Hub", "7-in-1 Hub", 39.99, 30, "Plastic", "Grey"));
-        System.out.println("Product Manager initialized with " + products.size() + " sample products."); // Feedback
     }
 
     // 1. Add a product (Check for duplicate ID)
