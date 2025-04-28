@@ -16,7 +16,7 @@ public class OrderManager {
         
     }
 
-    public boolean placeOrder(Customer customer, String discountCodeInput) {
+    public boolean placeOrder(Customer customer, String discountCodeInput, PaymentMethod paymentMethod, String cardNumber, String cvv) {
         Cart cart = customer.getCart();
 
         if (cart.isEmpty()) {
@@ -65,6 +65,18 @@ public class OrderManager {
         }
         // Apply the validated discount percentage (0% if no valid code)
         double finalTotal = subTotal * (1.0 - (discountPercentage / 100.0));
+        
+        Payment payment = new Payment(finalTotal, paymentMethod, cardNumber, cvv);
+        boolean paymentSuccessful = payment.processPayment(); // Attempt payment
+
+        if (!paymentSuccessful) {
+            // Payment failed (message printed by payment.processPayment)
+            System.out.println("❌ Order cannot be placed due to payment failure.");
+            return false; // Stop the order process
+        }
+
+        // --- Proceed only if payment was successful ---
+        System.out.println("Payment confirmed. Finalizing order...");
 
         // --- Stock Update ---
         // Should happen *after* validation but *before* order creation confirmation
@@ -81,6 +93,24 @@ public class OrderManager {
         order.printDetails(); // Print the order details/receipt right after placing
 
         return true;
+    }
+    
+    public double calculateFinalPrice(Cart cart, String discountCodeInput) {
+        if (cart == null || cart.isEmpty()) {
+            return 0.0;
+        }
+
+        double subTotal = cart.getTotal();
+        double discountPercentage = 0.0;
+        Discount appliedDiscount = null;
+
+         if (discountCodeInput != null && !discountCodeInput.trim().isEmpty()) {
+            appliedDiscount = discountManager.findActiveDiscountByCode(discountCodeInput.trim());
+            if (appliedDiscount != null) {
+                discountPercentage = appliedDiscount.getPercentage();
+            }
+        }
+        return subTotal * (1.0 - (discountPercentage / 100.0));
     }
 
     // --- convertCartToOrderItems, validateStock, updateStock, getAllOrders, getOrderById remain the same ---
@@ -112,6 +142,21 @@ public class OrderManager {
             item.getProduct().reduceStock(item.getQuantity());
         }
     }
+    
+    public List<Order> getOrdersForCustomer(Customer customer) {
+        if (customer == null) {
+            return new ArrayList<>(); // Return empty list if customer is null
+        }
+
+        List<Order> customerOrders = new ArrayList<>();
+        for (Order order : this.orders) {
+            // Compare customers based on username (assuming username is unique identifier)
+            if (order.getCustomer() != null && order.getCustomer().getUsername().equals(customer.getUsername())) {
+                customerOrders.add(order);
+            }
+        }
+        return customerOrders;
+    }
 
     public List<Order> getAllOrders() {
         return new ArrayList<>(orders);
@@ -125,4 +170,5 @@ public class OrderManager {
         }
         return null;
     }
+    
 }

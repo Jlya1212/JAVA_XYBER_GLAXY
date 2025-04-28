@@ -163,24 +163,29 @@ public class Main {
         System.out.println("Please login using the Customer Portal.");
     }
 
+        // --- Customer Menu (showCustomerMenu - MODIFIED) ---
     private static void showCustomerMenu(Customer customer) {
         while (true) {
             System.out.println("\n======== Shopping Portal ("+ customer.getName() +") ========");
             System.out.println("1. View Products");
             System.out.println("2. View Cart");
             System.out.println("3. View Wishlist");
-            System.out.println("4. Checkout");
-            System.out.println("5. Logout");
-            System.out.print("Enter choice (1-5): ");
+            System.out.println("4. View Purchase History"); 
+            System.out.println("5. Checkout");               
+            System.out.println("6. Logout");               
+            System.out.print("Enter choice (1-6): ");       
 
             String choice = scanner.nextLine().trim();
             switch (choice) {
                 case "1": displayProductsAndActions(customer); break;
                 case "2": viewCart(customer); break;
                 case "3": viewWishlist(customer); break;
-                case "4": handleCheckout(customer); break;
-                case "5": System.out.println("Logging out..."); return; // Exit customer menu
-                default: System.out.println("Invalid Choice!");
+                case "4":
+                    viewPurchaseHistory(customer); 
+                    break;
+                case "5": handleCheckout(customer); break; 
+                case "6": System.out.println("Logging out..."); return; 
+                default: System.out.println("Invalid Choice! Please enter 1-6."); 
             }
         }
     }
@@ -403,6 +408,27 @@ public class Main {
             }
         }
     }
+     
+     private static void viewPurchaseHistory(Customer customer) {
+        System.out.println("\n--- Your Purchase History ---");
+
+        // Get orders specifically for this customer from OrderManager
+        // Ensure List is imported: import java.util.List;
+        List<Order> customerOrders = orderManager.getOrdersForCustomer(customer);
+
+        if (customerOrders.isEmpty()) {
+            System.out.println("You have not placed any orders yet.");
+        } else {
+            System.out.println("Total Orders Found: " + customerOrders.size());
+            System.out.println("-----------------------------------------------");
+            // Display each order using the Order's printDetails method
+            for (Order order : customerOrders) {
+                order.printDetails(); // Prints the detailed receipt for each past order
+                System.out.println("-----------------------------------------------"); // Separator
+            }
+        }
+        System.out.println("--- End of Purchase History ---");
+    }
 
      private static void handleCheckout(Customer customer) {
         Cart cart = customer.getCart();
@@ -412,7 +438,7 @@ public class Main {
         }
 
         System.out.println("\n--- Proceeding to Checkout ---");
-        viewCart(customer); // Show cart contents for final review
+        viewCart(customer); // Show cart contents
 
         System.out.print("Enter discount code (or press Enter to skip): ");
         String discountCode = scanner.nextLine().trim();
@@ -420,10 +446,56 @@ public class Main {
             discountCode = null;
         }
 
-        if (orderManager.placeOrder(customer, discountCode)) {
-            // Success message/receipt printed by placeOrder
+        // --- Calculate and Confirm Price BEFORE Payment ---
+        double finalAmount = orderManager.calculateFinalPrice(cart, discountCode);
+        System.out.println("--------------------------------------------------");
+        System.out.printf("Total Amount Due: RM%.2f\n", finalAmount);
+        System.out.println("--------------------------------------------------");
+
+        System.out.print("Proceed to payment? (yes/no): ");
+        String confirmPayment = scanner.nextLine().trim();
+
+        if (!confirmPayment.equalsIgnoreCase("yes")) {
+            System.out.println("Checkout cancelled.");
+            return; // Exit checkout process
+        }
+
+        // --- Collect Payment Details ---
+        PaymentMethod selectedMethod = null;
+        while (selectedMethod == null) {
+            System.out.println("\nSelect Payment Method:");
+            System.out.println("1. Credit Card");
+            System.out.println("2. Debit Card");
+            System.out.print("Enter choice (1-2): ");
+            String methodChoice = scanner.nextLine().trim();
+            switch (methodChoice) {
+                case "1": selectedMethod = PaymentMethod.CREDIT_CARD; break;
+                case "2": selectedMethod = PaymentMethod.DEBIT_CARD; break;
+                default: System.out.println("Invalid choice. Please enter 1 or 2.");
+            }
+        }
+
+        // Use validation helpers for card/CVV input
+        String cardNumber = getValidatedStringInput(
+            "Enter Card Number (13-16 digits): ",
+            s -> s != null && s.matches("\\d{13,16}"), // Basic validation
+            "Invalid card number format (must be 13-16 digits)."
+        );
+
+        String cvv = getValidatedStringInput(
+            "Enter CVV (3-4 digits): ",
+            s -> s != null && s.matches("\\d{3,4}"), // Basic validation
+            "Invalid CVV format (must be 3-4 digits)."
+        );
+
+        // --- Call OrderManager with Payment Details ---
+        // Delegate the rest (stock check again, payment processing, order creation) to OrderManager
+        if (orderManager.placeOrder(customer, discountCode, selectedMethod, cardNumber, cvv)) {
+            // Success message and receipt are now printed inside placeOrder
+            // System.out.println("Order placed successfully!"); // Message moved
         } else {
-            System.out.println("Checkout could not be completed. Please review messages above.");
+            // Failure message printed by placeOrder or payment processing
+            System.out.println("Checkout could not be completed. Please review messages above or try again.");
         }
     }
 
