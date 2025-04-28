@@ -68,4 +68,19 @@ public class ProductManager {
         }
         return filtered.toArray(new Product[0]);
     }
+    
+    public Product[] getLowStockProducts(int threshold) {
+     if (threshold < 0) { // Optional: Handle negative threshold? Return empty or throw exception.
+         System.out.println("Warning: Low stock threshold cannot be negative. Returning empty list.");
+         return new Product[0];
+     }
+
+     List<Product> lowStock = new ArrayList<>();
+     for (Product p : this.products) { // Use this.products for clarity
+         if (p != null && p.getStockQuantity() <= threshold) { // Added null check for product
+             lowStock.add(p);
+         }
+     }
+     return lowStock.toArray(new Product[0]); // Convert List to Array
+ }
 }
