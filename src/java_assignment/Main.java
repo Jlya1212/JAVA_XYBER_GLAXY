@@ -1,5 +1,7 @@
 package java_assignment;
 
+import java.util.ArrayList; // Needed for List<Product>, List<User>
+import java.util.InputMismatchException; // For number format errors
 import java.util.List; // Needed for List<Order>
 import java.util.Scanner;
 
@@ -13,17 +15,11 @@ public class Main {
     private static DiscountManager discountManager = new DiscountManager(); // Must be before OrderManager
     private static OrderManager orderManager = new OrderManager(discountManager); // Pass DiscountManager dependency
 
+    // --- main method and initial role selection remain the same ---
     public static void main(String[] args) {
         System.out.println("+==================================+");
         System.out.println("+   Welcome to Xyber Glaxy Store   +");
         System.out.println("+==================================+");
-
-        // Optional: Pre-add a default admin if none exist, useful for testing
-        // Example: Check if any admin exists, if not add one
-        // if (userManager.getUsers().stream().noneMatch(u -> u instanceof Admin)) {
-        //    userManager.addUser(new Admin("admin", "pass", "Default Admin", "admin@store.com", AdminType.SUPER_ADMIN));
-        //    System.out.println("-> Added default admin user: username='admin', password='pass'");
-        // }
 
         // Main application loop
         while (true) {
@@ -32,26 +28,17 @@ public class Main {
             if (role.equals("admin")) {
                 // Handle the entire admin session (login + menu)
                 if (!handleAdminLoginAndMenu()) {
-                    // If admin logs out or login fails, loop back to role selection
                     System.out.println("\nReturning to role selection...");
                 }
-                // Decide if the app should exit here or loop. Current logic loops.
-
             } else { // Customer role
                 // Handle the entire customer session (login/register + menu)
                 if (!handleCustomerFlow()) {
-                    // If customer logs out or fails login/registration, loop back
                     System.out.println("\nReturning to role selection...");
                 }
-                // Decide if the app should exit here or loop. Current logic loops.
             }
         }
-        // Closing System.in is generally discouraged. If needed, add it here.
-        // scanner.close();
-        // System.out.println("\nExiting Store Application. Goodbye!");
     }
 
-    // --- Role Selection ---
     private static String selectRole() {
         while (true) {
             System.out.println("\nSelect your role:");
@@ -84,7 +71,6 @@ public class Main {
         } else {
              // Login failed (message printed by userManager.login)
              System.out.println("Admin login failed.");
-             // Option: Ask if they want to register (if no admins exist?)
              return false; // Login failed, return to role select
         }
     }
@@ -94,9 +80,9 @@ public class Main {
         while (true) {
             System.out.println("\n======== Admin Dashboard ("+ admin.getName() +") ========");
             System.out.println("1. View Low Stock Alerts");
-            System.out.println("2. Manage Products"); // Add, Update, Delete
+            System.out.println("2. Manage Products"); // Add, Update, Delete, List
             System.out.println("3. View All Orders");
-            System.out.println("4. Manage Discounts"); // Add, Activate, Deactivate
+            System.out.println("4. Manage Discounts"); // Add, Activate, Deactivate, List
             System.out.println("5. Manage Users"); // View, Add Admin
             System.out.println("6. Logout");
             System.out.print("Enter choice (1-6): ");
@@ -108,7 +94,7 @@ public class Main {
                     viewLowStockAlerts(admin);
                     break;
                  case "2":
-                    manageProducts(admin);
+                    manageProducts(admin); // Now fully implemented
                     break;
                  case "3":
                     viewAllOrders(admin);
@@ -117,7 +103,7 @@ public class Main {
                     manageDiscounts(admin);
                     break;
                  case "5":
-                    manageUsers(admin);
+                    manageUsers(admin); // Now fully implemented
                     break;
                 case "6":
                     System.out.println("Logging out...");
@@ -128,7 +114,7 @@ public class Main {
         }
     }
 
-    // --- Customer Flow: Entry Point ---
+
      private static boolean handleCustomerFlow() {
         while (true) {
             System.out.println("\n======== Customer Portal ========");
@@ -156,7 +142,6 @@ public class Main {
         }
     }
 
-    // --- Customer Login ---
      private static boolean handleCustomerLogin() {
         User user = userManager.login(scanner); // Use UserManager's login
         if (user instanceof Customer) {
@@ -173,14 +158,11 @@ public class Main {
         }
     }
 
-    // --- Customer Registration ---
     private static void handleCustomerRegistration() {
         userManager.registerCustomer(scanner); // Use UserManager's registration
-        // Feedback message now inside registerCustomer
         System.out.println("Please login using the Customer Portal.");
     }
 
-    // --- Customer Menu ---
     private static void showCustomerMenu(Customer customer) {
         while (true) {
             System.out.println("\n======== Shopping Portal ("+ customer.getName() +") ========");
@@ -203,7 +185,6 @@ public class Main {
         }
     }
 
-    // --- Product Viewing and Actions ---
     private static void displayProductsAndActions(Customer customer) {
         String category = selectProductCategory(); // Let user choose category
         Product[] products = pmanager.getProductsByCategory(category); // Get products
@@ -224,7 +205,6 @@ public class Main {
         handleProductSelectionActions(customer, products);
     }
 
-    // --- Category Selection ---
     private static String selectProductCategory() {
         while (true) {
             System.out.println("\nSelect product category:");
@@ -245,9 +225,7 @@ public class Main {
         }
     }
 
-    // --- Actions on Displayed Products ---
-    private static void handleProductSelectionActions(Customer customer, Product[] displayedProducts) {
-         // displayedProducts currently unused, but could be used to validate ID is from the list shown
+     private static void handleProductSelectionActions(Customer customer, Product[] displayedProducts) {
         while (true) {
             System.out.println("\nProduct Actions:");
             System.out.println("[1] Add to Cart");
@@ -297,7 +275,6 @@ public class Main {
         }
     }
 
-    // --- Add Product to Cart ---
      private static void handleAddToCart(Customer customer, Product product) {
         try {
             System.out.print("Enter Quantity for '" + product.getName() + "' (Available: " + product.getStockQuantity() + "): ");
@@ -308,15 +285,12 @@ public class Main {
                 return;
             }
 
-            // Check stock availability *before* adding to cart conceptually
             if (quantity > product.getStockQuantity()) {
                 System.out.println("❌ Insufficient stock! Only " + product.getStockQuantity() + " available.");
                 return;
             }
 
-            // Add item to cart (Cart class handles updating quantity if item exists)
             customer.getCart().addItem(product, quantity);
-            // Note: Stock is only reduced during actual checkout by OrderManager
             System.out.println("\n✅ " + quantity + " x '" + product.getName() + "' added/updated in cart!");
 
         } catch (NumberFormatException e) {
@@ -324,7 +298,6 @@ public class Main {
         }
     }
 
-    // --- View Shopping Cart ---
     private static void viewCart(Customer customer) {
         Cart cart = customer.getCart(); // Get the customer's cart
         CartItem[] cartItems = cart.getItems(); // Get items from the cart
@@ -337,10 +310,8 @@ public class Main {
         }
 
         int itemNumber = 1;
-        // Use cart's getTotal method for consistency
         double total = cart.getTotal();
 
-        // Display each item in the cart
         for (CartItem item : cartItems) {
             Product product = item.getProduct();
             System.out.printf("%d. %d x %-25s (ID: %d) @ RM%-8.2f = RM%.2f\n",
@@ -354,13 +325,9 @@ public class Main {
         System.out.println("--------------------------------------------------");
         System.out.printf("Cart Total: RM%.2f\n", total);
         System.out.println("=========================");
-
-        // Potential Enhancement: Add option to remove items from cart here
-        // System.out.println("[R] Remove item | [C] Continue to Checkout | [M] Back to Menu");
     }
 
-    // --- View Wishlist ---
-    private static void viewWishlist(Customer customer) {
+     private static void viewWishlist(Customer customer) {
         Wishlist wishlist = customer.getWishlist();
 
         while (true) {
@@ -373,14 +340,12 @@ public class Main {
                 return; // Exit if empty
             }
 
-            // Display items concisely
             int itemNum = 1;
             for (Product item : items) {
                  System.out.printf("%d. %s\n", itemNum++, item.toString());
             }
             System.out.println("=========================");
 
-            // Wishlist actions
             System.out.println("\nWishlist Actions:");
             System.out.println("[1] Remove Item");
             System.out.println("[2] View Item Details");
@@ -393,47 +358,36 @@ public class Main {
                      try {
                         System.out.print("Enter Product ID to remove: ");
                         int productIdRemove = Integer.parseInt(scanner.nextLine());
-
-                        // Find product name *before* removing for better message
                         Product productToRemove = null;
-                        for(Product p : items){ // Check only within the current wishlist items
-                            if(p.getProductID() == productIdRemove){
-                                productToRemove = p;
-                                break;
-                            }
+                        for(Product p : items){
+                            if(p.getProductID() == productIdRemove){ productToRemove = p; break; }
                         }
                         String removedName = (productToRemove != null) ? productToRemove.getName() : "Item ID " + productIdRemove;
 
-                        // Attempt removal using Wishlist method
                         if (wishlist.removeItem(productIdRemove)) {
                             System.out.println("✅ '" + removedName + "' removed successfully!");
-                            if (wishlist.isEmpty()) { // Check if now empty
+                            if (wishlist.isEmpty()) {
                                 System.out.println("Wishlist is now empty!");
-                                return; // Exit view if it became empty
+                                return;
                             }
-                            // Loop continues to show updated list automatically
                         } else {
-                            // This message might be redundant if removeItem fails only when ID not found
                             System.out.println("Product ID " + productIdRemove + " not found in wishlist!");
                         }
                     } catch (NumberFormatException e) {
                         System.out.println("❌ Invalid input! Please enter numbers only for Product ID.");
                     }
-                    break; // Break from switch, loop to show updated list/options
-
+                    break;
                  case "2": // View Item Details
                      try {
                         System.out.print("Enter Product ID to view details: ");
                         int productIdView = Integer.parseInt(scanner.nextLine());
                         Product productToView = null;
-                        // Check if the product exists in the *wishlist*
                          if(wishlist.containsProduct(productIdView)){
-                             productToView = pmanager.getProductById(productIdView); // Get details from main manager
+                             productToView = pmanager.getProductById(productIdView);
                          }
-
                         if(productToView != null){
                             System.out.println("\n--- Wishlist Item Details ---");
-                            productToView.printDetails(); // Show full details
+                            productToView.printDetails();
                              System.out.println("----------------------------");
                         } else {
                              System.out.println("Product ID " + productIdView + " not found in your wishlist.");
@@ -441,20 +395,16 @@ public class Main {
                      } catch (NumberFormatException e) {
                         System.out.println("❌ Invalid input! Please enter numbers only for Product ID.");
                     }
-                     break; // Break from switch, loop continues
-
+                     break;
                 case "3": // Back to Menu
                     return; // Exit wishlist view method
-
                 default:
                     System.out.println("Invalid choice!");
-                    // Loop continues
             }
         }
     }
 
-    // --- Handle Checkout Process ---
-    private static void handleCheckout(Customer customer) {
+     private static void handleCheckout(Customer customer) {
         Cart cart = customer.getCart();
         if (cart.isEmpty()) {
             System.out.println("Your cart is empty! Add items before checking out.");
@@ -466,32 +416,26 @@ public class Main {
 
         System.out.print("Enter discount code (or press Enter to skip): ");
         String discountCode = scanner.nextLine().trim();
-        // Convert empty input to null for OrderManager logic
         if (discountCode.isEmpty()) {
             discountCode = null;
         }
 
-        // Delegate the core checkout logic to OrderManager
-        // OrderManager now handles stock validation, discount application,
-        // price calculation, order creation, stock update, and printing the receipt.
         if (orderManager.placeOrder(customer, discountCode)) {
-            // Success: placeOrder prints receipt and confirmation
-            // No extra message needed here unless desired
+            // Success message/receipt printed by placeOrder
         } else {
-            // Failure: placeOrder prints specific errors (stock, etc.)
             System.out.println("Checkout could not be completed. Please review messages above.");
         }
     }
 
-
-    // --- Admin Function Implementations ---
+    // ======================================================
+    // ==           Admin Function Implementations         ==
+    // ======================================================
 
     /** Displays products with stock <= a defined threshold. */
      private static void viewLowStockAlerts(Admin admin) {
-          // Optional: Add permission check (e.g., only Product or Super Admin)
-          // if (!admin.isProductAdmin() && !admin.isSuperAdmin()) { ... return; }
+         // No specific permission needed beyond being an Admin (or could add product/super admin check)
          System.out.println("\n--- Low Stock Alerts ---");
-         int threshold = 10; // Define low stock threshold (could be configurable)
+         int threshold = 10; // Define low stock threshold
          System.out.println("(Showing items with stock <= " + threshold + ")");
 
          Product[] lowStockProducts = pmanager.getLowStockProducts(threshold); // Use ProductManager method
@@ -499,7 +443,7 @@ public class Main {
          if (lowStockProducts.length == 0) {
              System.out.println("✅ No products are currently low on stock.");
          } else {
-             System.out.println("Warning! The following items are low on stock:");
+             System.out.println("⚠️ Warning! The following items are low on stock:");
              for (Product p : lowStockProducts) {
                  System.out.printf("  - ID: %d | Name: %-25s | Stock: %d\n",
                                    p.getProductID(), p.getName(), p.getStockQuantity());
@@ -508,9 +452,9 @@ public class Main {
           System.out.println("------------------------");
      }
 
-    /** Provides menu for Admin to manage products (Add, Update, Delete, List). */
+    /** Provides menu for Admin to manage products (List, Add, Update, Delete). */
     private static void manageProducts(Admin admin) {
-        // Optional: Add permission check (e.g., only Product or Super Admin)
+        // Permission check: Only Product Admins or Super Admins
         if (!admin.isProductAdmin() && !admin.isSuperAdmin()) {
             System.out.println("❌ You do not have permission to manage products.");
             return;
@@ -528,51 +472,16 @@ public class Main {
 
             switch (choice) {
                 case "1": // List All Products
-                    Product[] allProducts = pmanager.listProducts();
-                    System.out.println("\n--- All Products ---");
-                    if(allProducts.length == 0){
-                        System.out.println("No products in the system.");
-                    } else {
-                        for(Product p : allProducts){
-                            System.out.println(p.toString() + " | Stock: " + p.getStockQuantity());
-                        }
-                    }
-                    System.out.println("--------------------");
+                    listAllManagedProducts();
                     break;
-                case "2": // Add New Product (Requires more detailed input based on type)
-                    System.out.println("Add Product - Feature under construction.");
-                    // TODO: Implement detailed add product flow
-                    // Ask for type (Computer, Peripheral, Accessory)
-                    // Get common details (ID, name, desc, price, stock)
-                    // Get specific details based on type
-                    // Create object (e.g., new Computer(...))
-                    // Call pmanager.addProduct(newProduct);
+                case "2": // Add New Product
+                    addProductInteractive(admin); // Call helper method
                     break;
                 case "3": // Update Existing Product
-                     try {
-                        System.out.print("Enter Product ID to update: ");
-                        int idToUpdate = Integer.parseInt(scanner.nextLine());
-                        if (pmanager.updateProduct(idToUpdate, scanner)) {
-                            // Update successful (messages printed within updateProduct/product methods)
-                        } else {
-                             // updateProduct prints "not found" message
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("❌ Invalid Product ID format.");
-                    }
+                    updateProductInteractive(admin);
                     break;
                 case "4": // Delete Product
-                     try {
-                        System.out.print("Enter Product ID to delete: ");
-                        int idToDelete = Integer.parseInt(scanner.nextLine());
-                        if (pmanager.deleteProduct(idToDelete)) {
-                            // deleteProduct prints success message
-                        } else {
-                            // deleteProduct prints "not found" message
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("❌ Invalid Product ID format.");
-                    }
+                    deleteProductInteractive(admin);
                     break;
                 case "5": // Back to Admin Menu
                     return;
@@ -582,9 +491,132 @@ public class Main {
         }
     }
 
+    /** Helper for manageProducts: Lists all products. */
+    private static void listAllManagedProducts() {
+         Product[] allProducts = pmanager.listProducts();
+         System.out.println("\n--- All Products in System ---");
+         if(allProducts.length == 0){
+             System.out.println("No products in the system.");
+         } else {
+             for(Product p : allProducts){
+                 // Display more info useful for management
+                 System.out.printf("ID: %-5d | Type: %-10s | Name: %-25s | Price: RM%-8.2f | Stock: %d\n",
+                                   p.getProductID(),
+                                   p.getCategory(),
+                                   p.getName(),
+                                   p.getPrice(),
+                                   p.getStockQuantity());
+             }
+         }
+         System.out.println("------------------------------");
+    }
+
+     /** Helper for manageProducts: Handles the interactive adding of a new product. */
+    private static void addProductInteractive(Admin admin) {
+        System.out.println("\n--- Add New Product ---");
+        System.out.println("Select Product Type:");
+        System.out.println("1. Computer");
+        System.out.println("2. Peripheral");
+        System.out.println("3. Accessory");
+        System.out.print("Enter type (1-3): ");
+        String typeChoice = scanner.nextLine().trim();
+
+        int productId;
+        String name, description;
+        double price;
+        int stock;
+
+        try {
+            // --- Get Common Details ---
+            productId = getValidatedIntInput("Enter Product ID: ", id -> pmanager.getProductById(id) == null, "Product ID already exists!");
+            name = getValidatedStringInput("Enter Product Name: ", s -> !s.isEmpty(), "Name cannot be empty.");
+            description = getValidatedStringInput("Enter Description: ", s -> !s.isEmpty(), "Description cannot be empty.");
+            price = getValidatedDoubleInput("Enter Price (RM): ", p -> p >= 0, "Price cannot be negative.");
+            stock = getValidatedIntInput("Enter Stock Quantity: ", q -> q >= 0, "Stock cannot be negative.");
+
+            Product newProduct = null;
+            switch (typeChoice) {
+                case "1": // Computer
+                    String processor = getValidatedStringInput("Enter Processor Type: ", s -> !s.isEmpty(), "Processor cannot be empty.");
+                    int ram = getValidatedIntInput("Enter RAM Size (GB): ", r -> r > 0, "RAM must be positive.");
+                    int storage = getValidatedIntInput("Enter Storage Size (GB): ", s -> s > 0, "Storage must be positive.");
+                    newProduct = new Computer(productId, name, description, price, stock, processor, ram, storage);
+                    break;
+                case "2": // Peripheral
+                    String connectivity = getValidatedStringInput("Enter Connectivity Type (e.g., USB, Bluetooth): ", s -> !s.isEmpty(), "Connectivity cannot be empty.");
+                    String osInputStr = getValidatedStringInput("Enter Compatible OS (comma-separated, e.g., Windows,macOS): ", s -> !s.isEmpty(), "OS list cannot be empty.");
+                    String[] compatibleOS = osInputStr.split(",");
+                    for (int i = 0; i < compatibleOS.length; i++) compatibleOS[i] = compatibleOS[i].trim(); // Trim whitespace
+                    newProduct = new Peripheral(productId, name, description, price, stock, connectivity, compatibleOS);
+                    break;
+                case "3": // Accessory
+                    String material = getValidatedStringInput("Enter Material: ", s -> !s.isEmpty(), "Material cannot be empty.");
+                    String color = getValidatedStringInput("Enter Color: ", s -> !s.isEmpty(), "Color cannot be empty.");
+                    newProduct = new Accessory(productId, name, description, price, stock, material, color);
+                    break;
+                default:
+                    System.out.println("Invalid product type selected.");
+                    return; // Exit add process
+            }
+
+            if (newProduct != null) {
+                pmanager.addProduct(newProduct); // Add to the manager
+                System.out.println("✅ " + newProduct.getCategory() + " product '" + newProduct.getName() + "' added successfully!");
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("❌ Invalid number format entered. Aborting product addition.");
+        } catch (Exception e) { // Catch any other unexpected errors during input
+            System.out.println("An error occurred during input: " + e.getMessage() + ". Aborting product addition.");
+        }
+    }
+
+    /** Helper for manageProducts: Handles updating a product. */
+     private static void updateProductInteractive(Admin admin) {
+         try {
+            System.out.print("Enter Product ID to update: ");
+            int idToUpdate = Integer.parseInt(scanner.nextLine());
+            // Delegate to ProductManager, which calls the product's updateFromInput
+            if (!pmanager.updateProduct(idToUpdate, scanner)) {
+                // ProductManager's updateProduct prints "not found" if applicable
+            }
+            // Success message is printed within the specific product's updateFromInput method
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid Product ID format.");
+        }
+     }
+
+     /** Helper for manageProducts: Handles deleting a product. */
+     private static void deleteProductInteractive(Admin admin) {
+          try {
+            System.out.print("Enter Product ID to delete: ");
+            int idToDelete = Integer.parseInt(scanner.nextLine());
+            Product productToDelete = pmanager.getProductById(idToDelete);
+
+            if (productToDelete != null) {
+                System.out.print("Are you sure you want to delete '" + productToDelete.getName() + "' (ID: " + idToDelete + ")? (yes/no): ");
+                String confirmation = scanner.nextLine().trim();
+                if (confirmation.equalsIgnoreCase("yes")) {
+                    if (pmanager.deleteProduct(idToDelete)) {
+                        // ProductManager's deleteProduct prints success feedback
+                    } else {
+                         System.out.println("Deletion failed unexpectedly after confirmation."); // Should not happen if found initially
+                    }
+                } else {
+                    System.out.println("Deletion cancelled.");
+                }
+            } else {
+                 System.out.println("Product ID " + idToDelete + " not found.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid Product ID format.");
+        }
+     }
+
+
     /** Displays all orders placed in the system. */
     private static void viewAllOrders(Admin admin) {
-         // Optional: Add permission check (e.g., only Order or Super Admin)
+         // Permission check: Only Order Admins or Super Admins
          if (!admin.isOrderAdmin() && !admin.isSuperAdmin()) {
               System.out.println("❌ You do not have permission to view orders.");
              return;
@@ -607,7 +639,7 @@ public class Main {
 
     /** Provides menu for Admin to manage discounts (Add, Activate, Deactivate, List). */
      private static void manageDiscounts(Admin admin) {
-          // Permission check: Example - Only Super Admins can manage discounts
+          // Permission check: Only Super Admins can manage discounts
            if (!admin.isSuperAdmin()) {
                 System.out.println("❌ You do not have permission to manage discounts.");
                 return;
@@ -632,13 +664,11 @@ public class Main {
                   case "2":
                       System.out.print("Enter code to Activate: ");
                       String codeToActivate = scanner.nextLine().trim();
-                      // Method prints its own success/failure message
                       System.out.println(discountManager.activeCode(codeToActivate));
                       break;
                   case "3":
                       System.out.print("Enter code to Deactivate: ");
                       String codeToDeactivate = scanner.nextLine().trim();
-                      // Method prints its own success/failure message
                       System.out.println(discountManager.deactiveCode(codeToDeactivate));
                       break;
                   case "4":
@@ -646,13 +676,12 @@ public class Main {
                   default:
                       System.out.println("Invalid choice.");
               }
-              // Loop continues until user chooses to go back
           }
      }
 
     /** Provides menu for Admin to manage users (List, Add Admin). */
      private static void manageUsers(Admin admin) {
-          // Permission check: Example - Only Super Admins can manage users
+          // Permission check: Only Super Admins can manage users
            if (!admin.isSuperAdmin()) {
                 System.out.println("❌ You do not have permission to manage users.");
                 return;
@@ -664,7 +693,7 @@ public class Main {
 
              System.out.println("\nOptions:");
              System.out.println("1. Register New Admin");
-             // Add more options? Delete user? Change type? Reset password?
+             // Potential TODO: Add options like Delete User, Change Admin Type
              System.out.println("2. Back to Admin Dashboard");
              System.out.print("Enter choice: ");
              String choice = scanner.nextLine().trim();
@@ -678,8 +707,68 @@ public class Main {
                  default:
                      System.out.println("Invalid choice.");
              }
-             // Loop continues until user chooses back
-        }
+         }
      }
 
-} 
+    // ======================================================
+    // ==           Input Validation Helper Methods        ==
+    // ======================================================
+
+    /** Gets integer input, validates using a predicate, and loops until valid. */
+    private static int getValidatedIntInput(String prompt, java.util.function.Predicate<Integer> validator, String errorMsg) {
+        int value = 0;
+        boolean valid = false;
+        while (!valid) {
+            System.out.print(prompt);
+            try {
+                value = Integer.parseInt(scanner.nextLine().trim());
+                if (validator.test(value)) {
+                    valid = true;
+                } else {
+                    System.out.println("⚠️ " + errorMsg);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid input. Please enter a whole number.");
+            }
+        }
+        return value;
+    }
+
+    /** Gets double input, validates using a predicate, and loops until valid. */
+    private static double getValidatedDoubleInput(String prompt, java.util.function.Predicate<Double> validator, String errorMsg) {
+        double value = 0.0;
+        boolean valid = false;
+        while (!valid) {
+            System.out.print(prompt);
+            try {
+                value = Double.parseDouble(scanner.nextLine().trim());
+                if (validator.test(value)) {
+                    valid = true;
+                } else {
+                    System.out.println("⚠️ " + errorMsg);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid input. Please enter a number (e.g., 12.99).");
+            }
+        }
+        return value;
+    }
+
+    /** Gets string input, validates using a predicate, and loops until valid. */
+    private static String getValidatedStringInput(String prompt, java.util.function.Predicate<String> validator, String errorMsg) {
+        String value = "";
+        boolean valid = false;
+        while (!valid) {
+            System.out.print(prompt);
+            value = scanner.nextLine().trim();
+            if (validator.test(value)) {
+                valid = true;
+            } else {
+                 System.out.println("⚠️ " + errorMsg);
+            }
+        }
+        return value;
+    }
+
+
+} // End of Main Class

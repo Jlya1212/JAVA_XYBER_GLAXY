@@ -9,6 +9,24 @@ public class UserManager {
     // Constructor: Initialize user list
     public UserManager() {
         users = new ArrayList<>();
+
+        // Add a default admin if no other admins exist (or just add it always for simplicity)
+        // Check prevents adding it multiple times if UserManager was ever re-instantiated (unlikely here)
+        if (users.stream().noneMatch(u -> u instanceof Admin)) {
+             // IMPORTANT: Change these default credentials immediately after first login!
+             Admin defaultAdmin = new Admin(
+                 "admin",           // Default Username
+                 "password123",     // Default Password
+                 "Default Admin",   // Default Name
+                 "admin@store.com", // Default Email
+                 AdminType.SUPER_ADMIN // Give super powers to the first admin
+             );
+             users.add(defaultAdmin);
+             System.out.println("-> Default SUPER_ADMIN user created.");
+             System.out.println("-> Username: admin");
+             System.out.println("-> Password: password123");
+             System.out.println("-> Please change the password after logging in.");
+        }
     }
 
     // ---------------- Register Customer ----------------

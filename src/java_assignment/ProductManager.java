@@ -11,46 +11,64 @@ public class ProductManager {
     // Constructor - adds some default products for testing
     public ProductManager() {
         products = new ArrayList<>();
-
-        // Sample Data
+        // Your Original Sample Data
         addProduct(new Computer(1001, "Gaming Laptop", "High-performance gaming laptop", 1499.99, 10, "Intel i7-12700H", 32, 1000));
         addProduct(new Peripheral(2001, "Wireless Mouse", "Ergonomic optical mouse", 49.99, 25, "Bluetooth", new String[]{"Windows", "macOS"}));
         addProduct(new Accessory(3001, "Mechanical Keyboard", "RGB backlit keyboard", 129.99, 15, "Aluminum", "Black"));
+        // Adding the other sample data back for better testing
+        addProduct(new Computer(1002, "Office Desktop", "Reliable workstation PC", 799.00, 20, "Intel i5-11400", 16, 512));
+        addProduct(new Peripheral(2002, "Webcam", "1080p HD Webcam with Mic", 65.00, 18, "USB", new String[]{"Windows", "macOS"}));
+        addProduct(new Accessory(3002, "USB-C Hub", "7-in-1 Hub", 39.99, 30, "Plastic", "Grey"));
+        System.out.println("Product Manager initialized with " + products.size() + " sample products."); // Feedback
     }
 
-    // 1. Add a product
+    // 1. Add a product (Check for duplicate ID)
     public void addProduct(Product product) {
-        products.add(product);
+         if (product != null) {
+            // Check if product with the same ID already exists
+            if (getProductById(product.getProductID()) == null) {
+                 products.add(product);
+            } else {
+                 System.out.println("⚠️ Warning: Product with ID " + product.getProductID() + " already exists. Not added.");
+            }
+        }
     }
 
-    // 2. Delete a product by ID
+    // 2. Delete a product by ID (Add feedback)
     public boolean deleteProduct(int productId) {
         Product p = getProductById(productId);
         if (p != null) {
             products.remove(p);
+             System.out.println("✅ Product ID " + productId + " (" + p.getName() + ") deleted."); // Feedback
             return true;
         }
+        System.out.println("❌ Product ID " + productId + " not found for deletion."); // Feedback
         return false;
     }
 
-    // 3. Update a product by ID (using updateFromInput from Printable)
+    // 3. Update a product by ID (Add feedback)
     public boolean updateProduct(int productId, Scanner scanner) {
         Product p = getProductById(productId);
         if (p != null) {
-            p.updateFromInput(scanner);
+            System.out.println("\n--- Updating Product ID: " + productId + " (" + p.getName() + ") ---");
+            p.updateFromInput(scanner); // Delegate update logic
+            // Success message printed within Product's updateFromInput
+            System.out.println("--- Finished updating Product ID: " + productId + " ---");
             return true;
         }
+        System.out.println("❌ Product ID " + productId + " not found for update."); // Feedback
         return false;
     }
 
     // 4. Search for a product by ID
     public Product getProductById(int productId) {
         for (Product p : products) {
-            if (p.getProductID() == productId) {
+             // Add null check for robustness, although products list shouldn't contain nulls with current addProduct logic
+             if (p != null && p.getProductID() == productId) {
                 return p;
             }
         }
-        return null;
+        return null; // Not found
     }
 
     // 5. Get all products as array
@@ -58,29 +76,40 @@ public class ProductManager {
         return products.toArray(new Product[0]);
     }
 
-    // 6. Get all products from a specific category
+    // 6. Get all products from a specific category (ADJUSTED)
     public Product[] getProductsByCategory(String category) {
+        // **** ADDED: Handle the "All" case ****
+        if (category == null || category.trim().equalsIgnoreCase("All")) {
+            return listProducts(); // Return all products using the existing method
+        }
+        // **************************************
+
+        // Original filtering logic for specific categories:
         List<Product> filtered = new ArrayList<>();
+        String trimmedCategory = category.trim(); // Use trimmed category for comparison
+
         for (Product p : products) {
-            if (p.getCategory().equalsIgnoreCase(category)) {
+            // Check product's category, ignore case (and check for null product)
+            if (p != null && p.getCategory().equalsIgnoreCase(trimmedCategory)) {
                 filtered.add(p);
             }
         }
         return filtered.toArray(new Product[0]);
     }
-    
+
+    // getLowStockProducts method (as you provided it)
     public Product[] getLowStockProducts(int threshold) {
-     if (threshold < 0) { // Optional: Handle negative threshold? Return empty or throw exception.
+     if (threshold < 0) {
          System.out.println("Warning: Low stock threshold cannot be negative. Returning empty list.");
          return new Product[0];
      }
 
      List<Product> lowStock = new ArrayList<>();
-     for (Product p : this.products) { // Use this.products for clarity
-         if (p != null && p.getStockQuantity() <= threshold) { // Added null check for product
+     for (Product p : this.products) {
+         if (p != null && p.getStockQuantity() <= threshold) {
              lowStock.add(p);
          }
      }
-     return lowStock.toArray(new Product[0]); // Convert List to Array
+     return lowStock.toArray(new Product[0]);
  }
 }
