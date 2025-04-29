@@ -34,6 +34,10 @@ public class UserManager {
                users.add(superAdmin);
                users.add(productAdmin);
                users.add(orderAdmin);
+               
+                users.add(new Customer("justin", "justin123", "John Doe", "john.doe@example.com"));
+                users.add(new Customer("pui", "pui456", "Jane Smith", "jane.smith@example.com"));
+                users.add(new Customer("okh", "okh789", "Mark Lee", "mark.lee@example.com"));
     }
 
     // ---------------- Register Customer ----------------

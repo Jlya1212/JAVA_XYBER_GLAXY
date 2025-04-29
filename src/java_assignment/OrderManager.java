@@ -2,6 +2,10 @@ package java_assignment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
+import java.util.Comparator;
 
 public class OrderManager {
     private List<Order> orders = new ArrayList<>();
@@ -171,4 +175,57 @@ public class OrderManager {
         return null;
     }
     
+    public void generateDailyReport(LocalDate targetDate) {
+    System.out.println("\n📅 === Daily Report for " + targetDate.format(DateTimeFormatter.ISO_DATE) + " ===");
+
+    List<Order> filteredOrders = orders.stream()
+        .filter(order -> order.getDate().toLocalDate().equals(targetDate))
+        .collect(Collectors.toList());
+
+    printOrderReportSummary(filteredOrders);
+}
+
+    public void generateMonthlyReport(int year, int month) {
+        System.out.println("\n📅 === Monthly Report for " + year + "-" + String.format("%02d", month) + " ===");
+
+        List<Order> filteredOrders = orders.stream()
+            .filter(order -> {
+                LocalDate date = order.getDate().toLocalDate();
+                return date.getYear() == year && date.getMonthValue() == month;
+            })
+            .collect(Collectors.toList());
+
+        printOrderReportSummary(filteredOrders);
+    }
+
+    public void generateYearlyReport(int year) {
+        System.out.println("\n📅 === Yearly Report for " + year + " ===");
+
+        List<Order> filteredOrders = orders.stream()
+            .filter(order -> order.getDate().toLocalDate().getYear() == year)
+            .collect(Collectors.toList());
+
+        printOrderReportSummary(filteredOrders);
+    }
+
+    private void printOrderReportSummary(List<Order> reportOrders) {
+        if (reportOrders.isEmpty()) {
+            System.out.println("⚠️ No orders found for this period.");
+            return;
+        }
+
+        double totalSales = 0.0;
+        int totalOrders = reportOrders.size();
+
+        for (Order order : reportOrders) {
+            totalSales += order.getTotalPrice();
+            System.out.println("- Order #" + order.getOrderId() + " | Customer: " + order.getCustomer().getUsername() + 
+                               " | Date: " + order.getDate() + 
+                               " | Total: RM" + String.format("%.2f", order.getTotalPrice()));
+        }
+
+        System.out.println("\n🧾 Summary:");
+        System.out.println("Total Orders: " + totalOrders);
+        System.out.println("Total Sales: RM" + String.format("%.2f", totalSales));
+    }
 }

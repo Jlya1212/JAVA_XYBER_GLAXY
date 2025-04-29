@@ -115,9 +115,7 @@ public class CustomerMenu {
         }
     }
 
-    /**
-     * Displays products by category and handles actions
-     */
+
     private void displayProductsAndActions(Customer customer) {
         String category = selectProductCategory(); // Let user choose category
         Product[] products = productManager.getProductsByCategory(category); // Get products
@@ -138,10 +136,7 @@ public class CustomerMenu {
         handleProductSelectionActions(customer, products);
     }
 
-    /**
-     * Allows user to select a product category
-     * @return String - selected category
-     */
+
     private String selectProductCategory() {
         while (true) {
             System.out.println("\nSelect product category:");

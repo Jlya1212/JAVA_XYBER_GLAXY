@@ -1,6 +1,8 @@
 package java_assignment;
 
 import java.util.Arrays;
+import java.time.LocalDateTime; // Add at the top of the file
+
 
 // Ensure Printable interface is available
 public class Order implements Printable {
@@ -10,6 +12,7 @@ public class Order implements Printable {
     private OrderItem[] items;
     private String appliedDiscountCode; // Store the code string that was successfully applied (or null)
     private double finalTotalPrice;   // Store the final calculated price
+    private LocalDateTime datePlaced;
 
     // Modified Constructor: Accepts final price and validated code
     public Order(Customer customer, OrderItem[] items, String appliedDiscountCode, double finalTotalPrice) {
@@ -22,6 +25,7 @@ public class Order implements Printable {
         this.items = Arrays.copyOf(items, items.length);
         this.appliedDiscountCode = appliedDiscountCode; // Store the validated code (or null)
         this.finalTotalPrice = finalTotalPrice;       // Store the pre-calculated final price
+        this.datePlaced = LocalDateTime.now(); 
     }
 
     // calculateTotal() method is no longer needed here.
@@ -32,7 +36,8 @@ public class Order implements Printable {
     public OrderItem[] getItems() { return Arrays.copyOf(items, items.length); } // Return a copy
     public String getDiscountCode() { return appliedDiscountCode; } // Return the applied code
     public double getTotalPrice() { return finalTotalPrice; } // Return the final price
-
+    public LocalDateTime getDate() {return datePlaced;}
+    
     @Override
     public void printDetails() {
         System.out.println("\n======== Order #" + orderId + " Receipt ========");
@@ -66,4 +71,5 @@ public class Order implements Printable {
         System.out.println("Thank you for your order!");
         System.out.println("===============================================\n");
     }
+    
 }

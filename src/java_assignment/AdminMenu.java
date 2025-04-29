@@ -8,7 +8,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
-
+import java.time.LocalDate;
 /**
  * AdminMenu class handles all admin-related menu operations and functionality
  */
@@ -64,10 +64,14 @@ public class AdminMenu {
             System.out.println("1. View Low Stock Alerts");
             System.out.println("2. Manage Products"); // Add, Update, Delete, List
             System.out.println("3. View All Orders");
-            System.out.println("4. Manage Discounts"); // Add, Activate, Deactivate, List
-            System.out.println("5. Manage Users"); // View, Add Admin
-            System.out.println("6. Logout");
-            System.out.print("Enter choice (1-6): ");
+            System.out.println("4. View Daily Report");
+            System.out.println("5. View Montly Report");
+            System.out.println("6. View Year Report ");
+            System.out.println("7. Manage Discounts"); // Add, Activate, Deactivate, List
+            System.out.println("8. Manage Users"); // View, Add Admin
+            System.out.println("9. Logout");
+
+            System.out.print("Enter choice (1-9): ");
 
             String choice = scanner.nextLine().trim();
 
@@ -82,12 +86,21 @@ public class AdminMenu {
                     viewAllOrders(admin);
                     break;
                  case "4":
+                     viewDailySalesReport(admin);
+                     break ;
+                 case "5":
+                     viewMonthlySalesReport(admin);
+                     break;
+                 case"6":
+                     viewYearlySalesReport(admin);
+                     break;
+                 case "7":
                     manageDiscounts(admin);
                     break;
-                 case "5":
+                 case "8":
                     manageUsers(admin);
                     break;
-                case "6":
+                case "9":
                     System.out.println("Logging out...");
                     return; // Exit admin menu -> handleAdminLoginAndMenu returns true
                 default:
@@ -315,6 +328,44 @@ public class AdminMenu {
         System.out.println("--- End of Order List ---");
     }
     
+        // --- New helper methods for reports ---
+    private void viewDailySalesReport(Admin admin ) {       
+        if (!admin.isOrderAdmin() && !admin.isSuperAdmin()) {
+            System.out.println("❌ You do not have permission to view orders.");
+            return;
+        }
+        try {
+            
+            System.out.print("📅 Enter date (YYYY-MM-DD): ");
+            String input = scanner.nextLine().trim();
+            LocalDate date = LocalDate.parse(input);
+            orderManager.generateDailyReport(date);
+        } catch (Exception e) {
+            System.out.println("❌ Invalid date format. Please use YYYY-MM-DD.");
+        }
+    }
+
+    private void viewMonthlySalesReport(Admin admin ) {
+        try {
+            System.out.print("📅 Enter year (e.g. 2025): ");
+            int year = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("📅 Enter month (1-12): ");
+            int month = Integer.parseInt(scanner.nextLine().trim());
+            orderManager.generateMonthlyReport(year, month);
+        } catch (Exception e) {
+            System.out.println("❌ Invalid input. Please enter valid numbers for year and month.");
+        }
+    }
+
+    private void viewYearlySalesReport(Admin admin ) {
+        try {
+            System.out.print("📅 Enter year (e.g. 2025): ");
+            int year = Integer.parseInt(scanner.nextLine().trim());
+            orderManager.generateYearlyReport(year);
+        } catch (Exception e) {
+            System.out.println("❌ Invalid year. Please enter a valid number.");
+        }
+    }
     /**
      * Provides menu for Admin to manage discounts (Add, Activate, Deactivate, List)
      */
