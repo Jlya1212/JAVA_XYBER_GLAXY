@@ -14,14 +14,14 @@ public class UserManager {
         // Check prevents adding it multiple times if UserManager was ever re-instantiated (unlikely here)
         if (users.stream().noneMatch(u -> u instanceof Admin)) {
              // IMPORTANT: Change these default credentials immediately after first login!
-             Admin defaultAdmin = new Admin(
+             Admin SuperAdmin = new Admin(
                  "admin",           // Default Username
                  "password123",     // Default Password
-                 "Default Admin",   // Default Name
+                 "Super Admin",   // Default Name
                  "admin@store.com", // Default Email
                  AdminType.SUPER_ADMIN // Give super powers to the first admin
              );
-             users.add(defaultAdmin);
+             users.add(SuperAdmin);
              
         }
     }
