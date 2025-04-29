@@ -10,20 +10,31 @@ public class UserManager {
     public UserManager() {
         users = new ArrayList<>();
 
-        // Add a default admin if no other admins exist (or just add it always for simplicity)
-        // Check prevents adding it multiple times if UserManager was ever re-instantiated (unlikely here)
-        if (users.stream().noneMatch(u -> u instanceof Admin)) {
-             // IMPORTANT: Change these default credentials immediately after first login!
-             Admin SuperAdmin = new Admin(
-                 "admin",           // Default Username
-                 "password123",     // Default Password
-                 "Super Admin",   // Default Name
-                 "admin@store.com", // Default Email
-                 AdminType.SUPER_ADMIN // Give super powers to the first admin
-             );
-             users.add(SuperAdmin);
-             
-        }
+                Admin superAdmin = new Admin(
+                   "superadmin", 
+                   "pass123", 
+                   "Alice Super", 
+                   "alice.super@store.com", 
+                   AdminType.SUPER_ADMIN
+               );
+               Admin productAdmin = new Admin(
+                   "productadmin", 
+                   "prod456", 
+                   "Bob Product", 
+                   "bob.product@store.com", 
+                   AdminType.PRODUCT_ADMIN
+               );
+               Admin orderAdmin = new Admin(
+                   "orderadmin", 
+                   "ord789", 
+                   "Clara Order", 
+                   "clara.order@store.com", 
+                   AdminType.ORDER_ADMIN
+               );
+
+               users.add(superAdmin);
+               users.add(productAdmin);
+               users.add(orderAdmin);
     }
 
     // ---------------- Register Customer ----------------
