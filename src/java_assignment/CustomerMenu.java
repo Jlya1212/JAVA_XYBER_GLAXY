@@ -17,15 +17,17 @@ public class CustomerMenu {
     private UserManager userManager;
     private ProductManager productManager;
     private OrderManager orderManager;
+    private DiscountManager discountManager;
     
     /**
      * Constructor with required dependencies
      */
-    public CustomerMenu(Scanner scanner, UserManager userManager, ProductManager productManager, OrderManager orderManager) {
+    public CustomerMenu(Scanner scanner, UserManager userManager, ProductManager productManager, OrderManager orderManager, DiscountManager discountManager) {
         this.scanner = scanner;
         this.userManager = userManager;
         this.productManager = productManager;
         this.orderManager = orderManager;
+        this.discountManager = discountManager;
     }
     
     /**
@@ -388,7 +390,7 @@ public class CustomerMenu {
 
         System.out.println("\n--- Proceeding to Checkout ---");
         viewCart(customer); // Show cart contents
-
+        discountManager.displayAllDiscount();
         System.out.print("Enter discount code (or press Enter to skip): ");
         String discountCode = scanner.nextLine().trim();
         if (discountCode.isEmpty()) {

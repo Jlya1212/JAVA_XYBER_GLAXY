@@ -28,7 +28,7 @@ public class SystemMenu {
         
         // Create menu objects with necessary dependencies
         this.adminMenu = new AdminMenu(scanner, userManager, productManager, discountManager, orderManager);
-        this.customerMenu = new CustomerMenu(scanner, userManager, productManager, orderManager);
+        this.customerMenu = new CustomerMenu(scanner, userManager, productManager, orderManager, discountManager);
     }
     
    
