@@ -31,10 +31,6 @@ public class AdminMenu {
         this.orderManager = orderManager;
     }
     
-    /**
-     * Handle the admin login process and menu display
-     * @return boolean indicating if login was successful
-     */
     public boolean handleAdminLoginAndMenu() {
         System.out.println("\n======== Admin Portal ========");
         User user = userManager.login(scanner); // Attempt login
@@ -54,10 +50,6 @@ public class AdminMenu {
         }
     }
     
-    /**
-     * Display the main admin menu and handle option selection
-     * @param admin The logged-in admin user
-     */
     private void showAdminMenu(Admin admin) {
         while (true) {
             System.out.println("\n======== Admin Dashboard ("+ admin.getName() +") ========");
@@ -109,9 +101,6 @@ public class AdminMenu {
         }
     }
     
-    /**
-     * Displays products with stock <= a defined threshold
-     */
     private void viewLowStockAlerts(Admin admin) {
         // No specific permission needed beyond being an Admin (or could add product/super admin check)
         System.out.println("\n--- Low Stock Alerts ---");
@@ -132,9 +121,6 @@ public class AdminMenu {
         System.out.println("------------------------");
     }
     
-    /**
-     * Provides menu for Admin to manage products (List, Add, Update, Delete)
-     */
     private void manageProducts(Admin admin) {
         // Permission check: Only Product Admins or Super Admins
         if (!admin.isProductAdmin() && !admin.isSuperAdmin()) {
@@ -173,9 +159,6 @@ public class AdminMenu {
         }
     }
     
-    /**
-     * Helper for manageProducts: Lists all products
-     */
     private void listAllManagedProducts() {
         Product[] allProducts = productManager.listProducts();
         System.out.println("\n--- All Products in System ---");
@@ -195,9 +178,6 @@ public class AdminMenu {
         System.out.println("------------------------------");
     }
     
-    /**
-     * Helper for manageProducts: Handles the interactive adding of a new product
-     */
     private void addProductInteractive(Admin admin) {
         System.out.println("\n--- Add New Product ---");
         System.out.println("Select Product Type:");
@@ -252,14 +232,11 @@ public class AdminMenu {
 
         } catch (InputMismatchException e) {
             System.out.println("❌ Invalid number format entered. Aborting product addition.");
-        } catch (Exception e) { // Catch any other unexpected errors during input
+        } catch (Exception e) {
             System.out.println("An error occurred during input: " + e.getMessage() + ". Aborting product addition.");
         }
     }
     
-    /**
-     * Helper for manageProducts: Handles updating a product
-     */
     private void updateProductInteractive(Admin admin) {
         try {
             System.out.print("Enter Product ID to update: ");
@@ -274,9 +251,6 @@ public class AdminMenu {
         }
     }
     
-    /**
-     * Helper for manageProducts: Handles deleting a product
-     */
     private void deleteProductInteractive(Admin admin) {
         try {
             System.out.print("Enter Product ID to delete: ");
@@ -303,9 +277,6 @@ public class AdminMenu {
         }
     }
     
-    /**
-     * Displays all orders placed in the system
-     */
     private void viewAllOrders(Admin admin) {
         // Permission check: Only Order Admins or Super Admins
         if (!admin.isOrderAdmin() && !admin.isSuperAdmin()) {
@@ -328,7 +299,6 @@ public class AdminMenu {
         System.out.println("--- End of Order List ---");
     }
     
-        // --- New helper methods for reports ---
     private void viewDailySalesReport(Admin admin ) {       
         if (!admin.isOrderAdmin() && !admin.isSuperAdmin()) {
             System.out.println("❌ You do not have permission to view orders.");
@@ -366,9 +336,7 @@ public class AdminMenu {
             System.out.println("❌ Invalid year. Please enter a valid number.");
         }
     }
-    /**
-     * Provides menu for Admin to manage discounts (Add, Activate, Deactivate, List)
-     */
+
     private void manageDiscounts(Admin admin) {
         // Permission check: Only Super Admins can manage discounts
         if (!admin.isSuperAdmin()) {
@@ -410,9 +378,7 @@ public class AdminMenu {
         }
     }
     
-    /**
-     * Provides menu for Admin to manage users (List, Add Admin)
-     */
+
     private void manageUsers(Admin admin) {
         // Permission check: Only Super Admins can manage users
         if (!admin.isSuperAdmin()) {
@@ -443,9 +409,7 @@ public class AdminMenu {
         }
     }
     
-    /**
-     * Gets integer input, validates using a predicate, and loops until valid
-     */
+
     private int getValidatedIntInput(String prompt, Predicate<Integer> validator, String errorMsg) {
         int value = 0;
         boolean valid = false;
@@ -465,9 +429,7 @@ public class AdminMenu {
         return value;
     }
 
-    /**
-     * Gets double input, validates using a predicate, and loops until valid
-     */
+
     private double getValidatedDoubleInput(String prompt, Predicate<Double> validator, String errorMsg) {
         double value = 0.0;
         boolean valid = false;
@@ -487,9 +449,7 @@ public class AdminMenu {
         return value;
     }
 
-    /**
-     * Gets string input, validates using a predicate, and loops until valid
-     */
+
     private String getValidatedStringInput(String prompt, Predicate<String> validator, String errorMsg) {
         String value = "";
         boolean valid = false;

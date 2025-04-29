@@ -99,11 +99,13 @@ public class CustomerMenu {
             System.out.println("3. View Wishlist");
             System.out.println("4. View Purchase History"); 
             System.out.println("5. Checkout");               
-            System.out.println("6. Logout");               
+            System.out.println("6. Logout");              
+            // add one more selection 
             System.out.print("Enter choice (1-6): ");       
 
             String choice = scanner.nextLine().trim();
             switch (choice) {
+                // add one more case 
                 case "1": displayProductsAndActions(customer); break;
                 case "2": viewCart(customer); break;
                 case "3": viewWishlist(customer); break;
@@ -115,7 +117,7 @@ public class CustomerMenu {
         }
     }
 
-
+    // add one more function to call out discount manager inside funtion : 
     private void displayProductsAndActions(Customer customer) {
         String category = selectProductCategory(); // Let user choose category
         Product[] products = productManager.getProductsByCategory(category); // Get products
