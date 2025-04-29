@@ -77,15 +77,14 @@ public class ProductManager {
 
     // 6. Get all products from a specific category (ADJUSTED)
     public Product[] getProductsByCategory(String category) {
-        // **** ADDED: Handle the "All" case ****
+        
         if (category == null || category.trim().equalsIgnoreCase("All")) {
-            return listProducts(); // Return all products using the existing method
+            return listProducts(); 
         }
-        // **************************************
+        
 
-        // Original filtering logic for specific categories:
         List<Product> filtered = new ArrayList<>();
-        String trimmedCategory = category.trim(); // Use trimmed category for comparison
+        String trimmedCategory = category.trim(); 
 
         for (Product p : products) {
             // Check product's category, ignore case (and check for null product)
@@ -96,7 +95,7 @@ public class ProductManager {
         return filtered.toArray(new Product[0]);
     }
 
-    // getLowStockProducts method (as you provided it)
+   
     public Product[] getLowStockProducts(int threshold) {
      if (threshold < 0) {
          System.out.println("Warning: Low stock threshold cannot be negative. Returning empty list.");

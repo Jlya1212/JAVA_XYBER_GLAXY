@@ -83,11 +83,9 @@ public class OrderManager {
         System.out.println("Payment confirmed. Finalizing order...");
 
         // --- Stock Update ---
-        // Should happen *after* validation but *before* order creation confirmation
         updateStock(orderItems);
 
         // --- Order Creation ---
-        // Pass customer, items, the *validated code* (or null), and the *calculated final total*
         Order order = new Order(customer, orderItems, validatedDiscountCode, finalTotal); // Pass finalTotal now
         orders.add(order);
 

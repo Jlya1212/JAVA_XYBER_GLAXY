@@ -1,14 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package java_assignment;
 
 import java.util.Scanner;
 
-/**
- * SystemMenu class handles the main system flow and entry points to the application
- */
 public class SystemMenu {
     // Static Scanner for consistent input across the application
     private static Scanner scanner;
@@ -23,10 +16,7 @@ public class SystemMenu {
     private AdminMenu adminMenu;
     private CustomerMenu customerMenu;
     
-    /**
-     * Constructor initializes all the required managers and menus
-     * @param scanner The scanner for user input
-     */
+   
     public SystemMenu(Scanner scanner) {
         SystemMenu.scanner = scanner;
         
@@ -41,9 +31,7 @@ public class SystemMenu {
         this.customerMenu = new CustomerMenu(scanner, userManager, productManager, orderManager);
     }
     
-    /**
-     * Start the application with a welcome message and main menu
-     */
+   
     public void start() {
         displayWelcomeMessage();
         
@@ -65,19 +53,14 @@ public class SystemMenu {
         }
     }
     
-    /**
-     * Display welcome message when system starts
-     */
+    
     private void displayWelcomeMessage() {
         System.out.println("+==================================+");
         System.out.println("+   Welcome to Xyber Glaxy Store   +");
         System.out.println("+==================================+");
     }
     
-    /**
-     * Menu for selecting user role
-     * @return The selected role as a string ("admin" or "customer")
-     */
+    
     private String selectRole() {
         while (true) {
             System.out.println("\nSelect your role:");
