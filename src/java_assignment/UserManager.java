@@ -6,7 +6,6 @@ import java.util.Scanner;
 public class UserManager {
     private ArrayList<User> users;
 
-    // Constructor: Initialize user list
     public UserManager() {
         users = new ArrayList<>();
 
