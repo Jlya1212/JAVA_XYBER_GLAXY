@@ -43,16 +43,16 @@ public class Payment {
         boolean validCvv = cvv != null && cvv.matches("\\d{3,4}"); // Basic check for 3 or 4 digits
 
         if (!validCardNumber) {
-            System.out.println("❌ Payment Failed: Invalid card number format (must be 13-16 digits).");
+            System.out.println("Payment Failed: Invalid card number format (must be 13-16 digits).");
             return false;
         }
         if (!validCvv) {
-            System.out.println("❌ Payment Failed: Invalid CVV format (must be 3-4 digits).");
+            System.out.println("Payment Failed: Invalid CVV format (must be 3-4 digits).");
             return false;
         }
 
         
-        System.out.println("✅ Payment Successful!");
+        System.out.println("Payment Successful!");
         
         return true;
     }

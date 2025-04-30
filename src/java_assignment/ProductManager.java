@@ -28,7 +28,7 @@ public class ProductManager {
             if (getProductById(product.getProductID()) == null) {
                  products.add(product);
             } else {
-                 System.out.println("⚠️ Warning: Product with ID " + product.getProductID() + " already exists. Not added.");
+                 System.out.println("Warning: Product with ID " + product.getProductID() + " already exists. Not added.");
             }
         }
     }
@@ -38,10 +38,10 @@ public class ProductManager {
         Product p = getProductById(productId);
         if (p != null) {
             products.remove(p);
-             System.out.println("✅ Product ID " + productId + " (" + p.getName() + ") deleted."); // Feedback
+             System.out.println("Product ID " + productId + " (" + p.getName() + ") deleted."); // Feedback
             return true;
         }
-        System.out.println("❌ Product ID " + productId + " not found for deletion."); // Feedback
+        System.out.println("Product ID " + productId + " not found for deletion."); // Feedback
         return false;
     }
 
@@ -55,7 +55,7 @@ public class ProductManager {
             System.out.println("--- Finished updating Product ID: " + productId + " ---");
             return true;
         }
-        System.out.println("❌ Product ID " + productId + " not found for update."); // Feedback
+        System.out.println("Product ID " + productId + " not found for update."); // Feedback
         return false;
     }
 

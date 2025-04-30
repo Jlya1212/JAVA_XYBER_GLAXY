@@ -61,6 +61,6 @@ public class Computer extends Product {
         System.out.print("Enter new storage size (" + storageSize + "): ");
         storageSize = Integer.parseInt(scanner.nextLine());
 
-        System.out.println("✅ Computer product updated.");
+        System.out.println("Computer product updated.");
     }
 }
