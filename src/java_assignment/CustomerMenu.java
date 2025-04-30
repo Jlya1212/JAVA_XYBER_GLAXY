@@ -30,10 +30,6 @@ public class CustomerMenu {
         this.discountManager = discountManager;
     }
     
-    /**
-     * Main entry point for customer flow (login/register)
-     * @return boolean - true if customer interaction completed, false to go back to role selection
-     */
     public boolean handleCustomerFlow() {
         while (true) {
             System.out.println("\n======== Customer Portal ========");
@@ -61,10 +57,7 @@ public class CustomerMenu {
         }
     }
 
-    /**
-     * Handles customer login process
-     * @return boolean - true if login successful, false otherwise
-     */
+    
     private boolean handleCustomerLogin() {
         User user = userManager.login(scanner); // Use UserManager's login
         if (user instanceof Customer) {
@@ -89,10 +82,7 @@ public class CustomerMenu {
         System.out.println("Please login using the Customer Portal.");
     }
 
-    /**
-     * Main customer menu for shopping and account management
-     * @param customer The logged-in customer
-     */
+    
     private void showCustomerMenu(Customer customer) {
         while (true) {
             System.out.println("\n======== Shopping Portal ("+ customer.getName() +") ========");
@@ -161,9 +151,7 @@ public class CustomerMenu {
         }
     }
 
-    /**
-     * Handles product actions (add to cart, wishlist, view details)
-     */
+    
     private void handleProductSelectionActions(Customer customer, Product[] displayedProducts) {
         while (true) {
             System.out.println("\nProduct Actions:");
@@ -240,41 +228,69 @@ public class CustomerMenu {
         }
     }
 
-    /**
-     * Displays the customer's shopping cart
-     */
+    
     private void viewCart(Customer customer) {
         Cart cart = customer.getCart(); // Get the customer's cart
-        CartItem[] cartItems = cart.getItems(); // Get items from the cart
+        while (true){
+            CartItem[] cartItems = cart.getItems(); // Get items from the cart
 
-        System.out.println("\n======== Your Cart ========");
-        if (cart.isEmpty()) { // Use Cart's isEmpty method
-            System.out.println("Your cart is empty!");
+            System.out.println("\n======== Your Cart ========");
+            if (cart.isEmpty()) { // Use Cart's isEmpty method
+                System.out.println("Your cart is empty!");
+                System.out.println("=========================");
+                return;
+            }
+
+            int itemNumber = 1;
+            double total = cart.getTotal();
+
+            for (CartItem item : cartItems) {
+                Product product = item.getProduct();
+                System.out.printf("%d. %d x %-25s (ID: %d) @ RM%-8.2f = RM%.2f\n",
+                                itemNumber++,
+                                item.getQuantity(),
+                                product.getName(),
+                                product.getProductID(),
+                                product.getPrice(),
+                                item.getTotalPrice()); // Use CartItem's price calculation
+            }
+            System.out.println("--------------------------------------------------");
+            System.out.printf("Cart Total: RM%.2f\n", total);
             System.out.println("=========================");
-            return;
-        }
+            
+            System.out.println("\nCart Options:");
+            System.out.println("1. Remove Item from Cart");
+            System.out.println("2. Back to Shopping Portal");
+            System.out.print("Enter choice (1-2): ");
+            String choice = scanner.nextLine().trim();
+            
+            switch (choice) {
+                case "1": // Remove Item
+                    try {
+                        System.out.print("Enter Product ID of the item to remove: ");
+                        int productIdToRemove = Integer.parseInt(scanner.nextLine().trim());
 
-        int itemNumber = 1;
-        double total = cart.getTotal();
-
-        for (CartItem item : cartItems) {
-            Product product = item.getProduct();
-            System.out.printf("%d. %d x %-25s (ID: %d) @ RM%-8.2f = RM%.2f\n",
-                            itemNumber++,
-                            item.getQuantity(),
-                            product.getName(),
-                            product.getProductID(),
-                            product.getPrice(),
-                            item.getTotalPrice()); // Use CartItem's price calculation
+                        // Attempt to remove the item using the Cart's method
+                        if (cart.removeItem(productIdToRemove)) {
+                            System.out.println("Item removed successfully.");
+                            // The loop will continue and redisplay the updated cart
+                        } else {
+                            System.out.println("Item with Product ID " + productIdToRemove + " not found in your cart.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter a numeric Product ID.");
+                    }
+                    break;
+                case "2":
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please enter 1 or 2.");
+                    break;
+            }
         }
-        System.out.println("--------------------------------------------------");
-        System.out.printf("Cart Total: RM%.2f\n", total);
-        System.out.println("=========================");
     }
 
-    /**
-     * Displays and manages the customer's wishlist
-     */
+    
     private void viewWishlist(Customer customer) {
         Wishlist wishlist = customer.getWishlist();
 
@@ -378,9 +394,39 @@ public class CustomerMenu {
         System.out.println("--- End of Purchase History ---");
     }
 
-    /**
-     * Handles the checkout process
-     */
+    private static void displayCartReadOnly(Customer customer) {
+        Cart cart = customer.getCart();
+        CartItem[] cartItems = cart.getItems();
+
+        System.out.println("\n======== Review Your Cart ========"); // Changed title slightly
+        if (cart.isEmpty()) {
+            // This case shouldn't really happen if called from checkout,
+            // as checkout already checks for empty cart, but good to handle.
+            System.out.println("Your cart is empty!");
+            System.out.println("===============================");
+            return;
+        }
+
+        int itemNumber = 1;
+        double total = cart.getTotal();
+
+        // Display each item in the cart
+        for (CartItem item : cartItems) {
+            Product product = item.getProduct();
+            System.out.printf("%d. %d x %-25s (ID: %d) @ RM%-8.2f = RM%.2f\n",
+                              itemNumber++,
+                              item.getQuantity(),
+                              product.getName(),
+                              product.getProductID(),
+                              product.getPrice(),
+                              item.getTotalPrice());
+        }
+        System.out.println("--------------------------------------------------");
+        System.out.printf("Cart Total: RM%.2f\n", total);
+        System.out.println("===============================");
+    }
+    
+    
     private void handleCheckout(Customer customer) {
         Cart cart = customer.getCart();
         if (cart.isEmpty()) {
@@ -389,7 +435,7 @@ public class CustomerMenu {
         }
 
         System.out.println("\n--- Proceeding to Checkout ---");
-        viewCart(customer); // Show cart contents
+        displayCartReadOnly(customer);
         discountManager.displayAllDiscount();
         System.out.print("Enter discount code (or press Enter to skip): ");
         String discountCode = scanner.nextLine().trim();

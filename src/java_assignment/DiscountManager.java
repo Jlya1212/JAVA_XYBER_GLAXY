@@ -114,7 +114,7 @@ public class DiscountManager{
             if(currentStatus){ // Simplified check
                 localStatus = "Active";
             }else{
-                localStatus = "Deactive"; // Changed 'Deactive' to 'Inactive' for consistency
+                localStatus = "Inactive"; 
             }
 
             System.out.println(" (" + localStatus + ")");
