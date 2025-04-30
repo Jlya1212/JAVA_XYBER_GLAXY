@@ -58,6 +58,6 @@ public class Peripheral extends Product {
         }
         compatibleOS = osInput;
 
-        System.out.println("✅ Peripheral product updated.");
+        System.out.println("Peripheral product updated.");
     }
 }
