@@ -90,7 +90,7 @@ public class DiscountManager{
         Discount d = new Discount(codeName, percentage);
         discounts[count] = d;
         this.count++;
-        System.out.println("✅ Discount code '" + codeName + "' added successfully.");
+        System.out.println("Discount code '" + codeName + "' added successfully.");
     }
 
      public void displayAllDiscount(){
@@ -129,19 +129,19 @@ public class DiscountManager{
         for (int i = 0; i < count; i++) {
             if (discounts[i] != null && discounts[i].getDiscountCode().equalsIgnoreCase(code)) {
                 discounts[i].setIsActive(true);
-                return "✅ Set '" + discounts[i].getDiscountCode() + "' to Active successfully!";
+                return "Set '" + discounts[i].getDiscountCode() + "' to Active successfully!";
             }
         }
-        return "❌ Code '" + code + "' not found. Activation failed.";
+        return "Code '" + code + "' not found. Activation failed.";
     }
 
     public String deactiveCode(String code) {
         for (int i = 0; i < count; i++) {
             if (discounts[i] != null && discounts[i].getDiscountCode().equalsIgnoreCase(code)) {
                 discounts[i].setIsActive(false);
-                return "✅ Set '" + discounts[i].getDiscountCode() + "' to Inactive successfully!";
+                return "Set '" + discounts[i].getDiscountCode() + "' to Inactive successfully!";
             }
         }
-        return "❌ Code '" + code + "' not found. Deactivation failed.";
+        return "Code '" + code + "' not found. Deactivation failed.";
     }
 }

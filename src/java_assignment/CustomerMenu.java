@@ -171,7 +171,7 @@ public class CustomerMenu {
                     Product product = productManager.getProductById(productId); // Find product globally
 
                     if (product == null) {
-                        System.out.println("❌ Product ID not found!");
+                        System.out.println("Product ID not found!");
                         continue; // Ask for action again
                     }
 
@@ -192,7 +192,7 @@ public class CustomerMenu {
                             break;
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("❌ Invalid input! Please enter a numeric Product ID.");
+                    System.out.println("Invalid input! Please enter a numeric Product ID.");
                 } catch (Exception e) { // Catch potential runtime errors
                     System.out.println("An error occurred: " + e.getMessage());
                 }
@@ -216,15 +216,15 @@ public class CustomerMenu {
             }
 
             if (quantity > product.getStockQuantity()) {
-                System.out.println("❌ Insufficient stock! Only " + product.getStockQuantity() + " available.");
+                System.out.println("Insufficient stock! Only " + product.getStockQuantity() + " available.");
                 return;
             }
 
             customer.getCart().addItem(product, quantity);
-            System.out.println("\n✅ " + quantity + " x '" + product.getName() + "' added/updated in cart!");
+            System.out.println("\n " + quantity + " x '" + product.getName() + "' added/updated in cart!");
 
         } catch (NumberFormatException e) {
-            System.out.println("❌ Invalid input! Please enter numbers only for quantity.");
+            System.out.println("Invalid input! Please enter numbers only for quantity.");
         }
     }
 
@@ -332,7 +332,7 @@ public class CustomerMenu {
                         String removedName = (productToRemove != null) ? productToRemove.getName() : "Item ID " + productIdRemove;
 
                         if (wishlist.removeItem(productIdRemove)) {
-                            System.out.println("✅ '" + removedName + "' removed successfully!");
+                            System.out.println(removedName + "' removed successfully!");
                             if (wishlist.isEmpty()) {
                                 System.out.println("Wishlist is now empty!");
                                 return;
@@ -341,7 +341,7 @@ public class CustomerMenu {
                             System.out.println("Product ID " + productIdRemove + " not found in wishlist!");
                         }
                     } catch (NumberFormatException e) {
-                        System.out.println("❌ Invalid input! Please enter numbers only for Product ID.");
+                        System.out.println("Invalid input! Please enter numbers only for Product ID.");
                     }
                     break;
                 case "2": // View Item Details
@@ -360,7 +360,7 @@ public class CustomerMenu {
                             System.out.println("Product ID " + productIdView + " not found in your wishlist.");
                         }
                     } catch (NumberFormatException e) {
-                        System.out.println("❌ Invalid input! Please enter numbers only for Product ID.");
+                        System.out.println("Invalid input! Please enter numbers only for Product ID.");
                     }
                     break;
                 case "3": // Back to Menu
@@ -500,7 +500,7 @@ public class CustomerMenu {
             if (validator.test(value)) {
                 valid = true;
             } else {
-                System.out.println("⚠️ " + errorMsg);
+                System.out.println(errorMsg);
             }
         }
         return value;

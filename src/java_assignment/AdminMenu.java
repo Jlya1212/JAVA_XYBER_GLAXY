@@ -107,9 +107,9 @@ public class AdminMenu {
         Product[] lowStockProducts = productManager.getLowStockProducts(threshold); // Use ProductManager method
 
         if (lowStockProducts.length == 0) {
-            System.out.println("✅ No products are currently low on stock.");
+            System.out.println("No products are currently low on stock.");
         } else {
-            System.out.println("⚠️ Warning! The following items are low on stock:");
+            System.out.println("Warning! The following items are low on stock:");
             for (Product p : lowStockProducts) {
                 System.out.printf("  - ID: %d | Name: %-25s | Stock: %d\n",
                                   p.getProductID(), p.getName(), p.getStockQuantity());
@@ -121,7 +121,7 @@ public class AdminMenu {
     private void manageProducts(Admin admin) {
         // Permission check: Only Product Admins or Super Admins
         if (!admin.isProductAdmin() && !admin.isSuperAdmin()) {
-            System.out.println("❌ You do not have permission to manage products.");
+            System.out.println("You do not have permission to manage products.");
             return;
         }
 
@@ -224,11 +224,11 @@ public class AdminMenu {
 
             if (newProduct != null) {
                 productManager.addProduct(newProduct); // Add to the manager
-                System.out.println("✅ " + newProduct.getCategory() + " product '" + newProduct.getName() + "' added successfully!");
+                System.out.println(newProduct.getCategory() + " product '" + newProduct.getName() + "' added successfully!");
             }
 
         } catch (InputMismatchException e) {
-            System.out.println("❌ Invalid number format entered. Aborting product addition.");
+            System.out.println("Invalid number format entered. Aborting product addition.");
         } catch (Exception e) {
             System.out.println("An error occurred during input: " + e.getMessage() + ". Aborting product addition.");
         }
@@ -244,7 +244,7 @@ public class AdminMenu {
             }
             // Success message is printed within the specific product's updateFromInput method
         } catch (NumberFormatException e) {
-            System.out.println("❌ Invalid Product ID format.");
+            System.out.println("Invalid Product ID format.");
         }
     }
     
@@ -270,14 +270,14 @@ public class AdminMenu {
                 System.out.println("Product ID " + idToDelete + " not found.");
             }
         } catch (NumberFormatException e) {
-            System.out.println("❌ Invalid Product ID format.");
+            System.out.println("Invalid Product ID format.");
         }
     }
     
     private void viewAllOrders(Admin admin) {
         // Permission check: Only Order Admins or Super Admins
         if (!admin.isOrderAdmin() && !admin.isSuperAdmin()) {
-            System.out.println("❌ You do not have permission to view orders.");
+            System.out.println("You do not have permission to view orders.");
             return;
         }
         System.out.println("\n--- All Customer Orders ---");
@@ -298,46 +298,46 @@ public class AdminMenu {
     
     private void viewDailySalesReport(Admin admin ) {       
         if (!admin.isOrderAdmin() && !admin.isSuperAdmin()) {
-            System.out.println("❌ You do not have permission to view orders.");
+            System.out.println("You do not have permission to view orders.");
             return;
         }
         try {
             
-            System.out.print("📅 Enter date (YYYY-MM-DD): ");
+            System.out.print("Enter date (YYYY-MM-DD): ");
             String input = scanner.nextLine().trim();
             LocalDate date = LocalDate.parse(input);
             orderManager.generateDailyReport(date);
         } catch (Exception e) {
-            System.out.println("❌ Invalid date format. Please use YYYY-MM-DD.");
+            System.out.println("Invalid date format. Please use YYYY-MM-DD.");
         }
     }
 
     private void viewMonthlySalesReport(Admin admin ) {
         try {
-            System.out.print("📅 Enter year (e.g. 2025): ");
+            System.out.print("Enter year (e.g. 2025): ");
             int year = Integer.parseInt(scanner.nextLine().trim());
-            System.out.print("📅 Enter month (1-12): ");
+            System.out.print("Enter month (1-12): ");
             int month = Integer.parseInt(scanner.nextLine().trim());
             orderManager.generateMonthlyReport(year, month);
         } catch (Exception e) {
-            System.out.println("❌ Invalid input. Please enter valid numbers for year and month.");
+            System.out.println("Invalid input. Please enter valid numbers for year and month.");
         }
     }
 
     private void viewYearlySalesReport(Admin admin ) {
         try {
-            System.out.print("📅 Enter year (e.g. 2025): ");
+            System.out.print("Enter year (e.g. 2025): ");
             int year = Integer.parseInt(scanner.nextLine().trim());
             orderManager.generateYearlyReport(year);
         } catch (Exception e) {
-            System.out.println("❌ Invalid year. Please enter a valid number.");
+            System.out.println("Invalid year. Please enter a valid number.");
         }
     }
 
     private void manageDiscounts(Admin admin) {
         // Permission check: Only Super Admins can manage discounts
         if (!admin.isSuperAdmin()) {
-            System.out.println("❌ You do not have permission to manage discounts.");
+            System.out.println("You do not have permission to manage discounts.");
             return;
         }
 
@@ -379,7 +379,7 @@ public class AdminMenu {
     private void manageUsers(Admin admin) {
         // Permission check: Only Super Admins can manage users
         if (!admin.isSuperAdmin()) {
-            System.out.println("❌ You do not have permission to manage users.");
+            System.out.println("You do not have permission to manage users.");
             return;
         }
 
@@ -420,7 +420,7 @@ public class AdminMenu {
                     System.out.println("⚠️ " + errorMsg);
                 }
             } catch (NumberFormatException e) {
-                System.out.println("❌ Invalid input. Please enter a whole number.");
+                System.out.println("Invalid input. Please enter a whole number.");
             }
         }
         return value;
@@ -437,10 +437,10 @@ public class AdminMenu {
                 if (validator.test(value)) {
                     valid = true;
                 } else {
-                    System.out.println("⚠️ " + errorMsg);
+                    System.out.println(errorMsg);
                 }
             } catch (NumberFormatException e) {
-                System.out.println("❌ Invalid input. Please enter a number (e.g., 12.99).");
+                System.out.println("Invalid input. Please enter a number (e.g., 12.99).");
             }
         }
         return value;
@@ -456,7 +456,7 @@ public class AdminMenu {
             if (validator.test(value)) {
                 valid = true;
             } else {
-                System.out.println("⚠️ " + errorMsg);
+                System.out.println(errorMsg);
             }
         }
         return value;
