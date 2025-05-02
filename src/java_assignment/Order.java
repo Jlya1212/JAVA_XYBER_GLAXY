@@ -28,7 +28,7 @@ public class Order implements Printable {
         this.datePlaced = LocalDateTime.now(); 
     }
 
-    // calculateTotal() method is no longer needed here.
+    
 
     // --- Getters ---
     public int getOrderId() { return orderId; }

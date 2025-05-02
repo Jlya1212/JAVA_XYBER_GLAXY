@@ -1,4 +1,4 @@
-         package java_assignment;
+package java_assignment;
 
 public class OrderItem {
     private Product product;

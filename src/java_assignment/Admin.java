@@ -2,6 +2,8 @@ package java_assignment;
 
 public class Admin extends User {
     private AdminType adminType;
+    
+    
 
     // Constructor no longer initializes managers
     public Admin(String username, String password, String name, String email, AdminType type) {

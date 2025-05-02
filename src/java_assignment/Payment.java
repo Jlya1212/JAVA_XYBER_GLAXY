@@ -4,10 +4,7 @@
  */
 package java_assignment;
 
-/**
- *
- * @author justin
- */
+
 public class Payment {
     private double amount;
     private PaymentMethod paymentMethod;

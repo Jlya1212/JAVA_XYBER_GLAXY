@@ -4,6 +4,10 @@ import java.util.Arrays;
 public class Wishlist {
     private Product[] items = new Product[0];
     
+    public Wishlist(){
+        
+    }
+    
     public boolean addItem(Product product) {
         if (containsProduct(product.getProductID())) {
             return false; // Duplicate found
